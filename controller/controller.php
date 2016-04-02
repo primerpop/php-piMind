@@ -1,7 +1,4 @@
 <?
-
-
-
 class sensor {
 	public $name = "";
 	public $closed_state = 0;
@@ -57,11 +54,14 @@ class controller {
 	private $_poll_delay = 5000;
 	private $_mq_segment;
 
-	public function __construct($controller_config_file ="controller.ini",$sensor_config_file = "sensors.ini") {
+	public function __construct($controller_config_file ="controller.ini",$sensor_config_file ="sensors.ini") {
 		$this->log("piMind Event Controller started");
 		$config = parse_ini_file($sensor_config_file,true);
 		$this->log("Reading $sensor_config_file");
-
+		if (!$config) {
+			$this->log("Could not find a config file to read");
+			$this->_shutdown = 1;
+		}
 		foreach ($config as $name => $details) {
 			$sensor = new sensor;
 			foreach ($details as $prop => $value) {
@@ -79,15 +79,21 @@ class controller {
 					$this->_message_queue_id = $value;
 			}
 		}
-		$this->_mq_segment = msg_get_queue($this->_message_queue_id) ;
-		$this->log("setting up some IPC messaging using segment ".  $this->_message_queue_id);
+		if (is_callable("msg_get_queue")) {
+			$this->_mq_segment = msg_get_queue($this->_message_queue_id) ;
+			$this->log("setting up some IPC messaging using segment ".  $this->_message_queue_id);
+		} else {
+			$this->log("There is no functional IPC message queue to leverage.  We can't work under these conditions");
+			$this->_shutdown = 1;
+			
+		}
  
 	}
 	function __destruct() {
 	}
 	function log($message, $severity = 1) {
 		echo time(). "\t($severity)\t $message\n\r";
-		syslog($severity, $message);
+		syslog($severity, "controller.php:" . $message);
 	}
 	function dump_sensors() {
 		print_r($this->_sensors);
@@ -143,6 +149,7 @@ class controller {
 			}
 			usleep($this->_poll_delay);
 		}
+		$this->log("Shutdown signalled.  Exiting realtime.");
 	}
 	function set_zone_state($zone_id, $new_state) {
 		$this->_zone_state[$zone_id] = $new_state;
@@ -168,7 +175,7 @@ class controller {
 		foreach ($zone_assertion as $zone => $pins){
 			foreach ($pins as $pin) {	
 				if ($this->_zone_state[$zone] == ARMED) {
-					$this->log("ALARM TRIPPED.  Zone $zone, pin $pin",10); 
+					$this->log("ALARM TRIPPED.  Zone $zone, pin $pin, " .$this->_sensors[$pin]->name,10); 
 				} else {
 					$this->log("Zone Activity. Zone $zone, pin $pin,  ". $this->_sensors[$pin]->name);
 				}
@@ -177,6 +184,12 @@ class controller {
 	}
 }
 
+// bring in common paths
+include("../paths.php");
+// get constants
+include(PIMIND_HOME."/constants.php");
+
+chdir(PIMIND_CONFIG);
 
 $controller = new controller;
 //$controller->event_sink("{\"pin\":4,\"label\":\"Garage Door\",\"ts\":1459462111,\"state\":\"0\"}");

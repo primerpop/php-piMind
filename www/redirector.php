@@ -1,12 +1,19 @@
 <?php
 
+// bring in common paths
+include("../paths.php");
+// get constants
+include(PIMIND_HOME."/constants.php");
+
+
 // catches the state change from the gpio monitor and send the event to the registered
-// event processors.
+// event controllers.
 
-$processors = array();
+$controllers = array();
 
-class processor {
+class controller {
 	public $callback_url;
+	public $secret = "";
 	public function callback($data) {
 		//open connection
 		$ch = curl_init();
@@ -25,28 +32,38 @@ class processor {
 	}
 }
 
-if (file_exists("processors.json")) {
-	$data = file_get_contents("processors.json");
+if (file_exists("controllers.json")) {
+	$data = file_get_contents("controllers.json");
 	if ($data) {
-		$processors = unserialize($data);
+		$controllers = json_decode($data);
 	}
 }
-print_r($processors);
+$configuation = parse_ini_file(PIMIND_CONFIG.DIRECTORY_SEPARATOR."redirector.ini");
+$config_secret = $configuration["secret"];
+
 if (isset($_REQUEST["action"])) {
 	$action = $_REQUEST["action"];
 	switch ($action) {
-		case "register_processor":
+		case "register_controller":
 			if (isset($_REQUEST["url"])) {
-				$np = new processor;
+				$np = new controller;
 				$np->callback_url = $_REQUEST["url"];
-				$processors[] = $np;
+				$controllers[] = $np;
 			}
 			break;
 		case "event":
-			if (isset($_REQUEST["data"])) {
-				foreach ($processors as $processor) {
-					$processor->callback($_REQUEST["data"]);
+			$secret = "";
+			if (isset($_REQUEST["secret"])) {
+				$secret = $_REQUEST["secret"];
+			}
+			if ($secret == $config_secret) {
+				if (isset($_REQUEST["data"])) {
+					foreach ($controllers as $controller) {
+						$controller->callback($_REQUEST["data"]);
+					}
 				}
+			} else {
+				header('HTTP/1.0 403 Forbidden');
 			}
 			break;
 		default:
@@ -56,8 +73,8 @@ if (isset($_REQUEST["action"])) {
 
 }
 
-if (count($processors)) {
-	$data = serialize($processors);//,JSON_FORCE_OBJECT);
-	file_put_contents("processors.json",$data);
+if (count($controllers)) {
+	$data = json_encode($controllers);//,JSON_FORCE_OBJECT);
+	file_put_contents("controllers.json",$data);
 }
 ?>

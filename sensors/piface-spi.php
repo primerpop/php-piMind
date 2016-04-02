@@ -1,4 +1,6 @@
 <?php
+chdir(__DIR__);
+
 use Pkj\Raspberry\PiFace\PiFaceDigital;
 
 require '../vendor/autoload.php';
@@ -26,6 +28,7 @@ class piface_spi {
 	private $_configuration;
 	private $_debug;
 	private $_shutdown = 0;
+	private $_secret = "";
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -57,7 +60,7 @@ class piface_spi {
 		$data["state"] = $state;
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
 		$json =  json_encode($data);
-		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json)); 
+		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json) . "&secret=" .urlencode($this->_secret)); 
 	}
 	function realtime() {
 		$pin_map = $this->_pin_map;
@@ -126,7 +129,7 @@ class piface_spi {
 	 */
 	function log($message, $severity = 1) {
 		echo time(). "\t($severity)\t $message\n\r";
-		syslog($severity, $message);
+		syslog($severity, "piface-spi.php:" . $message);
 	}
 	/**
 	 * Read the configuration file defined in constants.php
@@ -144,6 +147,11 @@ class piface_spi {
 		if (isset($this->_configuration["debug"])) {
 			$this->_debug = $this->_configuration["debug"];
 		}	
+		if (isset($this->_configuration["secret"])) {
+			$this->_secret = $this->_configuration["secret"];
+		} else {
+			$this->log("Configuration value for secret is unset. Calls to the redirector will probably fail." );
+		}
 		if (isset($this->_configuration["redirector_url"])) {
 			$this->_redirector_url = $this->_configuration["redirector_url"];
 		} else {
