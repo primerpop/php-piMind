@@ -57,7 +57,7 @@ class piface_spi {
 		$data["state"] = $state;
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
 		$json =  json_encode($data);
-		return file_get_contents($redirector_url . "?action=event&data=" .urlencode($json)); 
+		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json)); 
 	}
 	function realtime() {
 		$pin_map = $this->_pin_map;
