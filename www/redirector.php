@@ -33,12 +33,12 @@ class controller {
 }
 
 if (file_exists("controllers.json")) {
-	$data = file_get_contents("controllers.json");
+	$data = file_get_contents(PIMIND_STATE .DIRECTORY_SEPARATOR ."controllers.serialize");
 	if ($data) {
-		$controllers = json_decode($data);
+		$controllers = unserialize($data);
 	}
 }
-$configuation = parse_ini_file(PIMIND_CONFIG.DIRECTORY_SEPARATOR."redirector.ini");
+$configuration = parse_ini_file(PIMIND_CONFIG.DIRECTORY_SEPARATOR."redirector.ini");
 $config_secret = $configuration["secret"];
 
 if (isset($_REQUEST["action"])) {
@@ -74,7 +74,7 @@ if (isset($_REQUEST["action"])) {
 }
 
 if (count($controllers)) {
-	$data = json_encode($controllers);//,JSON_FORCE_OBJECT);
-	file_put_contents("controllers.json",$data);
+	$data = serialize($controllers);//,JSON_FORCE_OBJECT);
+	file_put_contents(PIMIND_STATE .DIRECTORY_SEPARATOR ."controllers.serialize",$data);
 }
 ?>
