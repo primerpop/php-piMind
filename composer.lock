@@ -1,0 +1,60 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "0d4b5912e6fa8d30a7d800805d46a982",
+    "content-hash": "755cc7f60dba794987b33e46bf12e3fd",
+    "packages": [
+        {
+            "name": "pkj/raspberry-piface-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/peec/raspberry-piface-api.git",
+                "reference": "78b841ddac4bf71829054899bc940530fd966d94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/peec/raspberry-piface-api/zipball/78b841ddac4bf71829054899bc940530fd966d94",
+                "reference": "78b841ddac4bf71829054899bc940530fd966d94",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Pkj\\Raspberry\\PiFace": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Petter Kjelkenes",
+                    "email": "kjelkenes@gmail.com",
+                    "homepage": "http://pkj.no",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Lets you control your PiFace for Raspberry PI with PHP.",
+            "homepage": "http://github.com/peec/raspberry-piface-api",
+            "time": "2013-10-01 21:30:07"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "pkj/raspberry-piface-api": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
