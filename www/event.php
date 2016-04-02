@@ -6,7 +6,8 @@ include(PIMIND_HOME."/constants.php");
 
 $message_queue_id = 0;
 $mq_seqment = 0;
-$config = parse_ini_file(PIMIND_STATE.DIRECTORY_SEPARATOR. "controller.ini");
+$config = parse_ini_file(PIMIND_CONFIG.DIRECTORY_SEPARATOR. "controller.ini");
+
 foreach ($config as $prop => $value) {
 	switch ($prop) {
 		case "id":
