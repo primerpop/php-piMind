@@ -1,7 +1,9 @@
 <?php
-// get the piFace classes from Git
-require '../vendor/autoload.php';
 use Pkj\Raspberry\PiFace\PiFaceDigital;
+
+require '../vendor/autoload.php';
+
+
 // bring in common paths
 include("../paths.php");
 // get constants
@@ -29,8 +31,8 @@ class piface_spi {
 	 */
 	
 	public function __construct() {
-		$this->log("piMind piface-spi input monitoring agent started");
-		if (class_exists(PiFaceDigital)) {
+		$this->log("piMind piface-spi input monitoring agent started.");
+		if (class_exists("Pkj\Raspberry\PiFace\PiFaceDigital")) {
 			$this->_spi_dev = PiFaceDigital::create();
 			$this->_spi_dev->init();
 		} else {
