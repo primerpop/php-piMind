@@ -49,6 +49,7 @@ class piface_spi {
 		
 		$data["type"] = 2; // raw input data messages are type 0.
 		$data["label"] = $mac;
+		$data["data"] = $mac;
 		$data["ts"] = time();
 		$data["state"] = $state;
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
