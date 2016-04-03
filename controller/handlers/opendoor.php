@@ -29,7 +29,7 @@ class opendoor extends controller_handler {
 			$sensor= $this->_sensors[$data->pin];
 			
 			if ($sensor->type == SENSORTYPE_DOORSWITCH) {
-				if ($sensor->state == 1) {
+				if (!isset($this->_door_states[$data->pin]) && $sensor->state == 1) {
 					$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
 				} else {
 					unset($this->_door_states[$data->pin]);
@@ -40,8 +40,10 @@ class opendoor extends controller_handler {
 	public function tick() {
 		foreach ($this->_door_states as $pin => $opentime) {
 			if (time() > $opentime) {
-				//$handler_name, $sensor,$event_code, $event_message
+				//send a message that the door is held open
 				$message = $this->_controller->generate_handler_event(get_class($this),$this->_sensors[$pin],self::door_kept_open,"Door Held Open");
+				// reset the door state delay again.
+				$this->_door_states[$pin] = time() + $this->_opendoor_delay; 
 				$this->_controller->event($message);
 			}
 		}
