@@ -16,7 +16,7 @@ class sensor {
 	public $detail_string = "";
 	public $enabled = 1;
 	public $state = 0;
-	public $type = SENSORTYPE_BINARY;
+	public $type = SENSORTYPE_DOORSWITCH;
 	public $zone = 0;
 	public $last_state_change_ts = 0;
 	public $sticky_state_change = 0;
@@ -108,8 +108,10 @@ class controller {
 	function __destruct() {
 	}
 	private function _event_broadcast($data) {
-		foreach ($this->_handlers as $handler) {
-			$handler->event($data);
+		foreach ($this->_handlers as $handler_name => $handler) {
+			if ($data->source_handler != $handler_name) {
+				$handler->event($data);
+			}
 		}
 	}
 	private function _tick_broadcast() {
@@ -168,32 +170,35 @@ class controller {
 		$msg->event_message= $event_message; 
 		
 	}
+	function event($data) {
+		if (!$data->type) {
+			if (isset($this->_sensors[$data->pin])) {
+				$sensor =  $this->_sensors[$data->pin];
+			} else {
+				// undefined sensor sent data.
+				$sensor = new sensor;
+				$sensor->pin = $data->pin;
+		
+				$this->log("A phantom sensor raised data on pin " .$data->pin,2);
+				$this->_sensors[$data->pin] = $sensor;
+			}
+			$this->log("Got an event on pin " . $data->pin,5);
+			if ($sensor->event($data)) {
+				//sensors return true if there was a state change
+				$this->log("Running a state check");
+				$this->run_state_check();
+		
+			} else {
+				// no state change.
+			}
+		}
+		$this->_event_broadcast($data);
+	}
 	function event_sink($jsondata) {
 
 		$data = json_decode(trim($jsondata));
 		if ($data) {
-			if (!$data->type) {
-				if (isset($this->_sensors[$data->pin])) {
-					$sensor =  $this->_sensors[$data->pin];
-				} else {
-					// undefined sensor sent data.  
-					$sensor = new sensor;
-					$sensor->pin = $data->pin;
-				
-					$this->log("A phantom sensor raised data on pin " .$data->pin,2);
-					$this->_sensors[$data->pin] = $sensor;
-				}
-				$this->log("Got an event on pin " . $data->pin);
-				if ($sensor->event($data)) {
-					//sensors return true if there was a state change
-					$this->log("Running a state check");
-					$this->run_state_check();
-	
-				} else {
-					// no state change.
-				}
-			}
-			$this->_event_broadcast($data);
+			$this->event($data);
 		} else {
 			$this->log("A raised event didn't json_decode nicely \t $jsondata",2);
 		}

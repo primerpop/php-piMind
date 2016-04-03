@@ -14,7 +14,7 @@ class opendoor extends controller_handler {
 	private $_sensors = array();
 	
 	private $_opendoor_delay = 20;
-	
+	const door_kept_open = 1;
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("opendoor handler initialized");
@@ -36,9 +36,11 @@ class opendoor extends controller_handler {
 		}
 	}
 	public function tick() {
-		foreach ($_door_state as $pin => $opentime) {
+		foreach ($this->_door_states as $pin => $opentime) {
 			if (time() > $opentime) {
-				
+				//$handler_name, $sensor,$event_code, $event_message
+				$message = $this->_controller->generate_handler_event(get_class($this),$this->_sensors[$pin],self::door_kept_open,"Door Held Open");
+				$this->_controller->event($message);
 			}
 		}
 	}
