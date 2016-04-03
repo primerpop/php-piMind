@@ -29,9 +29,9 @@ class opendoor extends controller_handler {
 		
 		if ($sensor->type == SENSORTYPE_DOORSWITCH) {
 			if ($sensor->state == 1) {
-				$_door_states[$data->pin] = time() + $this->_opendoor_delay;
+				$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
 			} else {
-				unset($_door_states[$data->pin]);
+				unset($this->_door_states[$data->pin]);
 			}	
 		}
 	}
