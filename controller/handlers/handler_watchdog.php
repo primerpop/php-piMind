@@ -24,10 +24,13 @@ class handler_watchdog extends controller_handler {
 			switch ($data->type) {
 				case 0:
 					$this->_controller->log("watchdog sees a sensor event" . print_r($data,true));
+					break;
 				case 1:
 					$this->_controller->log("watchdog sees a handler event" . print_r($data,true));
-				break;
-				
+					break;
+				case 2:
+					$this->_controller->log("watchdog sees an identity event" . print_r($data,true));
+					break;
 			}
 			
 		}

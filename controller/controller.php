@@ -193,7 +193,7 @@ class controller {
 				$this->log("A phantom sensor raised data on pin " .$data->pin,2);
 				$this->_sensors[$data->pin] = $sensor;
 			}
-			$this->log("Got an event on pin " . $data->pin,5);
+			$this->log("Got an event on pin " . $data->pin. " with state " . $data->state,5);
 			if ($sensor->event($data)) {
 				//sensors return true if there was a state change
 				$this->log("Running a state check");
