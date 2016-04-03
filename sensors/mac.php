@@ -34,15 +34,9 @@ class piface_spi {
 	 */
 	
 	public function __construct() {
-		$this->log("piMind piface-spi input monitoring agent started.");
-		if (class_exists("Pkj\Raspberry\PiFace\PiFaceDigital")) {
-			$this->_spi_dev = PiFaceDigital::create();
-			$this->_spi_dev->init();
-		} else {
-			$this->log("SPI:  PiFaceDigital class is not available",10);
-			
-		}
-		$this->log("Reading configuration from " . PIMIND_CONFIG .DIRECTORY_SEPARATOR . "piface-spi.ini");
+		$this->log("piMind MAC Address presence detection agent started.");
+		
+		$this->log("Reading configuration from " . PIMIND_CONFIG .DIRECTORY_SEPARATOR . "mac.ini");
 		$this->read_configuration();
 		
 	}
@@ -86,10 +80,10 @@ class piface_spi {
 			
 				foreach ($active_macs as $mac => $timestamp) {
 					if (!in_array($mac, $macs)) {
-						$time = $active_macs[$mac];
+						
 						unset($active_macs[$mac]);
 						$this->raise_event($mac, 0);
-						$this->log("MAC $mac went away. Was with us for ". time() - $time . " seconds");
+						$this->log("MAC $mac went away. Was with us for ". time() - $timestamp . " seconds");
 					}
 				}
 			
