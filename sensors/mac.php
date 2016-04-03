@@ -67,25 +67,26 @@ class piface_spi {
 			
 			$active_macs = array();
 			while (true) {
-				exec("/usr/bin/nmap 192.168.255.1-255 -sP -oG ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
+				exec("/usr/bin/nmap 192.168.255.1-255 -sP -oX ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
 				$file = file_get_contents(PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
-				print_r($file);
+				
 				$macs=array();
 				if (preg_match_all('/([A-F0-9:]+)" addrtype="mac"/',$file ,$macs) ) {
 					$macs = $macs[1];
 				}
-				print_r($macs);
+				
 				// loop once to update the active list
 				foreach ($macs as $mac) {
 					if (!isset($active_macs[$mac])) {
 						$active_macs[$mac] = time();
-							
+						$this->raise_event($mac, 1);			
 					}
 				}
 			
 				foreach ($active_macs as $mac => $timestamp) {
 					if (!in_array($mac, $macs)) {
 						unset($active_macs[$mac]);
+						$this->raise_event($mac, 0);
 					}
 				}
 			
