@@ -26,6 +26,7 @@ class mac_sensor {
 	private $_debug;
 	private $_shutdown = 0;
 	private $_secret = "";
+	private $_nmap_cmd = "";
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -60,42 +61,44 @@ class mac_sensor {
 			
 			$active_macs = array();
 			while (true) {
-				//exec("/usr/bin/nmap 192.168.255.1-255 -sP -oX ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
+				exec($this->_nmap_cmd ." ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
 				$file = file_get_contents(PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
-				
-				$macs=array();
-				if (preg_match_all('/([A-F0-9:]+)" addrtype="mac"/',$file ,$macs) ) {
-					$macs = $macs[1];
-				}
-				
-				$ips=array();
-				if (preg_match_all('/([A-F0-9.]+)" addrtype="ipv4"/',$file ,$ips) ) {
-					$ips = $ips[1];
-				}
-				$mac_ip_map = array();
-				foreach ($macs as $key =>$mac){
-					$mac_ip_map[$mac] = $ips[$key];
-				}
-				
-				// loop once to update the active list
-				foreach ($macs as $mac) {
-					if (!isset($active_macs[$mac])) {
-						$active_macs[$mac] = time();
-						$this->raise_event($mac, $mac_ip_map[$mac],1);
-						$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
+				if ($file) {
+					$macs=array();
+					if (preg_match_all('/([A-F0-9:]+)" addrtype="mac"/',$file ,$macs) ) {
+						$macs = $macs[1];
 					}
-				}
-			
-				foreach ($active_macs as $mac => $timestamp) {
-					if (!in_array($mac, $macs)) {
-						
-						
-						$this->raise_event($mac,$mac_ip_map[$mac], 0);
-						$this->log("MAC $mac (".$mac_ip_map[$mac].") went away. Was with us for ". (time() - $timestamp) . " seconds");
-						unset($active_macs[$mac]);
+					
+					$ips=array();
+					if (preg_match_all('/([A-F0-9.]+)" addrtype="ipv4"/',$file ,$ips) ) {
+						$ips = $ips[1];
 					}
+					$mac_ip_map = array();
+					foreach ($macs as $key =>$mac){
+						$mac_ip_map[$mac] = $ips[$key];
+					}
+					
+					// loop once to update the active list
+					foreach ($macs as $mac) {
+						if (!isset($active_macs[$mac])) {
+							$active_macs[$mac] = time();
+							$this->raise_event($mac, $mac_ip_map[$mac],1);
+							$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
+						}
+					}
+				
+					foreach ($active_macs as $mac => $timestamp) {
+						if (!in_array($mac, $macs)) {
+							
+							
+							$this->raise_event($mac,$mac_ip_map[$mac], 0);
+							$this->log("MAC $mac (".$mac_ip_map[$mac].") went away. Was with us for ". (time() - $timestamp) . " seconds");
+							unset($active_macs[$mac]);
+						}
+					}
+				} else {
+					$this->log("can't read mac.nmap or file is empty.",6);
 				}
-			
 			}			
 		    usleep($this->_configuration["usleep_poll_delay"]);
 		}
@@ -121,7 +124,11 @@ class mac_sensor {
 		
 		if (isset($this->_configuration["debug"])) {
 			$this->_debug = $this->_configuration["debug"];
+		}
+		if (isset($this->_configuration["nmap_cmd"])) {
+			$this->_nmap_cmd = $this->_configuration["nmap_cmd"];
 		}	
+		
 		if (isset($this->_configuration["secret"])) {
 			$this->_secret = $this->_configuration["secret"];
 		} else {
