@@ -109,7 +109,11 @@ class controller {
 	}
 	private function _event_broadcast($data) {
 		foreach ($this->_handlers as $handler_name => $handler) {
-			if ($data->source_handler != $handler_name) {
+			if (isset($data->source_handler)) {
+				if ($data->source_handler != $handler_name) {
+					$handler->event($data);
+				}
+			} else {
 				$handler->event($data);
 			}
 		}

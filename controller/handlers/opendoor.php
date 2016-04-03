@@ -25,7 +25,7 @@ class opendoor extends controller_handler {
 	
 	}
 	public function event($data) {
-		$sensor= $_sensors[$data->pin];
+		$sensor= $this->_sensors[$data->pin];
 		
 		if ($sensor->type == SENSORTYPE_DOORSWITCH) {
 			if ($sensor->state == 1) {
