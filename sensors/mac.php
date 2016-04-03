@@ -1,9 +1,6 @@
 <?php
 chdir(__DIR__);
 
-use Pkj\Raspberry\PiFace\PiFaceDigital;
-
-require '../vendor/autoload.php';
 
 
 // bring in common paths
@@ -19,7 +16,7 @@ include(PIMIND_HOME."/constants.php");
  * @author Paul
  *
  */
-class piface_spi {
+class mac_sensor {
 	private $_pin_map;
 	private $_redirector_url;
 	private $_ignore_pins;
@@ -43,13 +40,14 @@ class piface_spi {
 	public function __destruct() {
 		
 	}
-	function raise_event($mac,$state) {
+	function raise_event($mac,$ip,$state) {
 		$data = array();
 		$data["pin"] = 0;
 		
 		$data["type"] = 2; // raw input data messages are type 0.
-		$data["label"] = $mac;
-		$data["data"] = $mac;
+		$data["label"] = "exec(nmap)";
+		$data["mac"] = $mac;
+		$data["ip"] = $ip;
 		$data["ts"] = time();
 		$data["state"] = $state;
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
@@ -62,7 +60,7 @@ class piface_spi {
 			
 			$active_macs = array();
 			while (true) {
-				exec("/usr/bin/nmap 192.168.255.1-255 -sP -oX ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
+				//exec("/usr/bin/nmap 192.168.255.1-255 -sP -oX ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
 				$file = file_get_contents(PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
 				
 				$macs=array();
@@ -70,12 +68,21 @@ class piface_spi {
 					$macs = $macs[1];
 				}
 				
+				$ips=array();
+				if (preg_match_all('/([A-F0-9.]+)" addrtype="ipv4"/',$file ,$ips) ) {
+					$ips = $ips[1];
+				}
+				$mac_ip_map = array();
+				foreach ($macs as $key =>$mac){
+					$mac_ip_map[$mac] = $ips[$key];
+				}
+				
 				// loop once to update the active list
 				foreach ($macs as $mac) {
 					if (!isset($active_macs[$mac])) {
 						$active_macs[$mac] = time();
-						$this->raise_event($mac, 1);
-						$this->log("MAC $mac seen.");
+						$this->raise_event($mac, $mac_ip_map[$mac],1);
+						$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
 					}
 				}
 			
@@ -83,8 +90,8 @@ class piface_spi {
 					if (!in_array($mac, $macs)) {
 						
 						
-						$this->raise_event($mac, 0);
-						$this->log("MAC $mac went away. Was with us for ". (time() - $timestamp) . " seconds");
+						$this->raise_event($mac,$mac_ip_map[$mac], 0);
+						$this->log("MAC $mac (".$mac_ip_map[$mac].") went away. Was with us for ". (time() - $timestamp) . " seconds");
 						unset($active_macs[$mac]);
 					}
 				}
@@ -131,8 +138,8 @@ class piface_spi {
 }
 
 
-$piface = new piface_spi();
-$piface->realtime();
+$mac_sensor = new mac_sensor();
+$mac_sensor->realtime();
 
 
 ?>
