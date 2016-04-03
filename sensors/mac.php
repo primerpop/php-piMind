@@ -79,7 +79,8 @@ class piface_spi {
 				foreach ($macs as $mac) {
 					if (!isset($active_macs[$mac])) {
 						$active_macs[$mac] = time();
-						$this->raise_event($mac, 1);			
+						$this->raise_event($mac, 1);
+						$this->log("MAC $mac seen.");
 					}
 				}
 			
@@ -87,6 +88,7 @@ class piface_spi {
 					if (!in_array($mac, $macs)) {
 						unset($active_macs[$mac]);
 						$this->raise_event($mac, 0);
+						$this->log("MAC $mac went away.");
 					}
 				}
 			
