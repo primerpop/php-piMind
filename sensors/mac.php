@@ -91,8 +91,8 @@ class mac_sensor {
 						if (!in_array($mac, $macs)) {
 							
 							
-							$this->raise_event($mac,$mac_ip_map[$mac], 0);
-							$this->log("MAC $mac (".$mac_ip_map[$mac].") went away. Was with us for ". (time() - $timestamp) . " seconds");
+							$this->raise_event($mac,null, 0);
+							$this->log("MAC $mac went away. Was with us for ". (time() - $timestamp) . " seconds");
 							unset($active_macs[$mac]);
 						}
 					}
