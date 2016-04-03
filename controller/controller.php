@@ -29,8 +29,10 @@ class sensor {
 		return $this->state;
 	}
 	public function event($data) {
-		if ($this->sensor_group == "") {
-			$this->sensor_group = $data->sensor_group;
+		if (isset($data->sensor_group)) {
+			if ($this->sensor_group == "") {
+				$this->sensor_group = $data->sensor_group;
+			}
 		}
 		if (isset($data->state)) {
 			if ($data->state != $this->state) {
@@ -167,9 +169,13 @@ class controller {
 		$msg->source_handler = $handler_name;
 		$msg->type = 1;
 		$msg->ts = time();
-		$msg->pin = $pin;
-		$msg->label = $sensor->name;
-		$msg->zone =$sensor->zone;
+		$msg->pin = $sensor->pin;
+		if (isset($sensor->name)){
+			$msg->label = $sensor->name;
+		}
+		if (isset($sensor->zone)){
+			$msg->zone =$sensor->zone;
+		}
 		$msg->event_code = $event_code;
 		$msg->event_message= $event_message; 
 		
