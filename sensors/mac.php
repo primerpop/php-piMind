@@ -47,6 +47,7 @@ class mac_sensor {
 		
 		$data["type"] = 2; // raw input data messages are type 0.
 		$data["label"] = "exec(nmap)";
+		$data["class"] =get_class($this);
 		$data["mac"] = $mac;
 		$data["ip"] = $ip;
 		$data["ts"] = time();

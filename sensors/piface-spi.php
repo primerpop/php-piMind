@@ -59,6 +59,7 @@ class piface_spi {
 		$data["label"] = $this->_pin_map[$pin];
 		$data["ts"] = time();
 		$data["state"] = $state;
+		$data["class"] =get_class($this);
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
 		$json =  json_encode($data);
 		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json) . "&secret=" .urlencode($this->_secret)); 
