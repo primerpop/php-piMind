@@ -164,12 +164,13 @@ class controller {
 	function get_sensors() {
 		return $this->_sensors;
 	}
-	function generate_handler_event($handler_name, $sensor,$event_code, $event_message) {
+	function generate_handler_event($handler_name, $sensor,$event_code, $event_message,$state) {
 		$msg = new stdClass();
 		$msg->source_handler = $handler_name;
 		$msg->type = 1;
 		$msg->ts = time();
 		$msg->pin = $sensor->pin;
+		$msg->state = $state;
 		if (isset($sensor->name)){
 			$msg->label = $sensor->name;
 		}

@@ -32,9 +32,11 @@ class opendoor extends controller_handler {
 				if (!isset($this->_door_states[$data->pin]) && $sensor->state == 1) {
 					$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
 					$this->_controller->log("opendoor: watching opendoor on " . $data->pin . ".  Alarm set at " . $this->_door_states[$data->pin]);
-				} else {
+				} elseif (isset($this->_door_states[$data->pin]) && $sensor->state == 0) {
 					unset($this->_door_states[$data->pin]);
 					$this->_controller->log("opendoor: no longer watching opendoor on " . $data->pin . ".  Alarm cleared.");
+				} else {
+					
 				}	
 			}
 		}
@@ -43,7 +45,7 @@ class opendoor extends controller_handler {
 		foreach ($this->_door_states as $pin => $opentime) {
 			if (time() > $opentime) {
 				//send a message that the door is held open
-				$message = $this->_controller->generate_handler_event(get_class($this),$this->_sensors[$pin],self::door_kept_open,"Door Held Open");
+				$message = $this->_controller->generate_handler_event(get_class($this),$this->_sensors[$pin],self::door_kept_open,"Door Held Open",1);
 				$this->_controller->log("opendoor:  pin $pin held open > than ".$this->_opendoor_delay);
 				// reset the door state delay again.
 				$this->_door_states[$pin] = time() + $this->_opendoor_delay; 
