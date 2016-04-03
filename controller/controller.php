@@ -178,7 +178,7 @@ class controller {
 		}
 		$msg->event_code = $event_code;
 		$msg->event_message= $event_message; 
-		
+		return $msg;	
 	}
 	function event($data) {
 		if (isset($data->type) && !$data->type) {
