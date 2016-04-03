@@ -1,5 +1,5 @@
 <?
-
+chdir(__DIR__);
 abstract class controller_handler {
 	protected $_controller = null;
 	public function create($controller_pointer) {} 
