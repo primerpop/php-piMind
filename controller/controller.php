@@ -32,31 +32,31 @@ class sensor {
 		if ($this->sensor_group == "") {
 			$this->sensor_group = $data->sensor_group;
 		}
-		
-		if ($data->state != $this->state) {
-			// new state is different from the last.
-			if ($this->state == 1) {
-				if (!$this->sticky_state_change) {
+		if (isset($data->state)) {
+			if ($data->state != $this->state) {
+				// new state is different from the last.
+				if ($this->state == 1) {
+					if (!$this->sticky_state_change) {
+						$this->state = $data->state;
+						$this->last_state_change_ts = $data->ts;
+						return 1;
+	
+					} else {
+						// if we get set we don't get unset in sticky mode.
+						if (!$this->state){
+						$this->state = 1;//$data->state;
+						$this->last_state_change_ts = $data->ts;
+						return 1;	
+						}
+					}
+				}else {
 					$this->state = $data->state;
 					$this->last_state_change_ts = $data->ts;
 					return 1;
-
-				} else {
-					// if we get set we don't get unset in sticky mode.
-					if (!$this->state){
-					$this->state = 1;//$data->state;
-					$this->last_state_change_ts = $data->ts;
-					return 1;	
-					}
+	
 				}
-			}else {
-				$this->state = $data->state;
-				$this->last_state_change_ts = $data->ts;
-				return 1;
-
 			}
-		}
-		
+		}		
 		return 0;
 	} 
 }
