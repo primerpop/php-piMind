@@ -32,7 +32,7 @@ class controller {
 	}
 }
 
-if (file_exists("controllers.json")) {
+if (file_exists(PIMIND_STATE .DIRECTORY_SEPARATOR ."controllers.serialize")) {
 	$data = file_get_contents(PIMIND_STATE .DIRECTORY_SEPARATOR ."controllers.serialize");
 	if ($data) {
 		$controllers = unserialize($data);
