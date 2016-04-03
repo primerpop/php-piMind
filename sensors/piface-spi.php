@@ -55,6 +55,7 @@ class piface_spi {
 		if (!isset($this->_pin_map[$pin])){
 			$this->_pin_map[$pin]= "Undefined piface-spi input";
 		}
+		$data["type"] = 0; // raw input data messages are type 0.
 		$data["label"] = $this->_pin_map[$pin];
 		$data["ts"] = time();
 		$data["state"] = $state;

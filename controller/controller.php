@@ -153,31 +153,45 @@ class controller {
 		echo time(). "\t($severity)\t $message\n\r";
 		syslog($severity, "controller.php:" . $message);
 	}
-	function dump_sensors() {
-		print_r($this->_sensors);
+	function get_sensors() {
+		return $this->_sensors;
+	}
+	function generate_handler_event($handler_name, $sensor,$event_code, $event_message) {
+		$msg = new stdClass();
+		$msg->source_handler = $handler_name;
+		$msg->type = 1;
+		$msg->ts = time();
+		$msg->pin = $pin;
+		$msg->label = $sensor->name;
+		$msg->zone =$sensor->zone;
+		$msg->event_code = $event_code;
+		$msg->event_message= $event_message; 
+		
 	}
 	function event_sink($jsondata) {
 
 		$data = json_decode(trim($jsondata));
 		if ($data) {
-			if (isset($this->_sensors[$data->pin])) {
-				$sensor =  $this->_sensors[$data->pin];
-			} else {
-				// undefined sensor sent data.  
-				$sensor = new sensor;
-				$sensor->pin = $data->pin;
-			
-				$this->log("A phantom sensor raised data on pin " .$data->pin,2);
-				$this->_sensors[$data->pin] = $sensor;
-			}
-			$this->log("Got an event on pin " . $data->pin);
-			if ($sensor->event($data)) {
-				//sensors return true if there was a state change
-				$this->log("Running a state check");
-				$this->run_state_check();
-
-			} else {
-				// no state change.
+			if (!$data->type) {
+				if (isset($this->_sensors[$data->pin])) {
+					$sensor =  $this->_sensors[$data->pin];
+				} else {
+					// undefined sensor sent data.  
+					$sensor = new sensor;
+					$sensor->pin = $data->pin;
+				
+					$this->log("A phantom sensor raised data on pin " .$data->pin,2);
+					$this->_sensors[$data->pin] = $sensor;
+				}
+				$this->log("Got an event on pin " . $data->pin);
+				if ($sensor->event($data)) {
+					//sensors return true if there was a state change
+					$this->log("Running a state check");
+					$this->run_state_check();
+	
+				} else {
+					// no state change.
+				}
 			}
 			$this->_event_broadcast($data);
 		} else {
