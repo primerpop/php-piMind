@@ -22,7 +22,7 @@ class handler_watchdog extends controller_handler {
 	public function event($data) {
 		if (isset($data->type)) {
 			if ($data->type == 1) {
-				$this->_controller("watchdog sees a handler event" . print_r($data,true));
+				$this->_controller->log("watchdog sees a handler event" . print_r($data,true));
 			}
 		}
 	}
