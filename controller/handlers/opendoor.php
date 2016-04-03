@@ -25,14 +25,16 @@ class opendoor extends controller_handler {
 	
 	}
 	public function event($data) {
-		$sensor= $this->_sensors[$data->pin];
-		
-		if ($sensor->type == SENSORTYPE_DOORSWITCH) {
-			if ($sensor->state == 1) {
-				$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
-			} else {
-				unset($this->_door_states[$data->pin]);
-			}	
+		if ($data) {
+			$sensor= $this->_sensors[$data->pin];
+			
+			if ($sensor->type == SENSORTYPE_DOORSWITCH) {
+				if ($sensor->state == 1) {
+					$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
+				} else {
+					unset($this->_door_states[$data->pin]);
+				}	
+			}
 		}
 	}
 	public function tick() {

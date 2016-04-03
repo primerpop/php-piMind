@@ -181,7 +181,7 @@ class controller {
 		
 	}
 	function event($data) {
-		if (!$data->type) {
+		if (isset($data->type) && !$data->type) {
 			if (isset($this->_sensors[$data->pin])) {
 				$sensor =  $this->_sensors[$data->pin];
 			} else {
