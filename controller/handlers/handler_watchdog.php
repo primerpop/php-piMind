@@ -23,13 +23,13 @@ class handler_watchdog extends controller_handler {
 		if (isset($data->type)) {
 			switch ($data->type) {
 				case 0:
-					$this->_controller->log("watchdog sees a sensor event: " .implode(", ", $data));
+					$this->_controller->log("watchdog sees a sensor event: " .implode(", ", get_object_vars($data)));
 					break;
 				case 1:
-					$this->_controller->log("watchdog sees a handler event: " . implode(", ", $data));
+					$this->_controller->log("watchdog sees a handler event: " . implode(", ", get_object_vars($data)));
 					break;
 				case 2:
-					$this->_controller->log("watchdog sees an identity event: " . implode(", ", $data));
+					$this->_controller->log("watchdog sees an identity event: " . implode(", ", get_object_vars($data)));
 					break;
 			}
 			
