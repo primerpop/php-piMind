@@ -1,4 +1,14 @@
 <?
+
+abstract class controller_handler {
+	protected $_controller = null;
+	public function create($controller_pointer) {} 
+	public function destroy() {}
+	public function event($data) {}
+	public function tick() {}
+}
+
+
 class sensor {
 	public $name = "";
 	public $closed_state = 0;
@@ -10,7 +20,7 @@ class sensor {
 	public $zone = 0;
 	public $last_state_change_ts = 0;
 	public $sticky_state_change = 0;
-
+	public $sensor_group ="";
 	public function set_state($value) {
 		$this->state = $value;
 		return $this->state;
@@ -19,6 +29,10 @@ class sensor {
 		return $this->state;
 	}
 	public function event($data) {
+		if ($this->sensor_group == "") {
+			$this->sensor_group = $data->sensor_group;
+		}
+		
 		if ($data->state != $this->state) {
 			// new state is different from the last.
 			if ($this->state == 1) {
@@ -42,6 +56,7 @@ class sensor {
 
 			}
 		}
+		
 		return 0;
 	} 
 }
@@ -53,6 +68,7 @@ class controller {
 	private $_message_queue_id;
 	private $_poll_delay = 5000;
 	private $_mq_segment;
+	private $_handlers = array();
 
 	public function __construct($controller_config_file ="controller.ini",$sensor_config_file ="sensors.ini") {
 		$this->log("piMind Event Controller started");
@@ -71,7 +87,7 @@ class controller {
 			$this->log("Adding Sensor for pin " . $sensor->pin);
 
 		}
-
+		$this->_setup_handlers();
 		$config = parse_ini_file($controller_config_file);
 		foreach ($config as $prop => $value) {
 			switch ($prop) {
@@ -90,6 +106,48 @@ class controller {
  
 	}
 	function __destruct() {
+	}
+	private function _event_broadcast($data) {
+		foreach ($this->_handlers as $handler) {
+			$handler->event($data);
+		}
+	}
+	private function _tick_broadcast() {
+		foreach ($this->_handlers as $handler) {
+			$handler->tick();
+		}
+	}
+	private function _setup_handlers() {
+		static $glob_signature = 0;
+		$this->log("Setting up event handlers");		
+		$files = glob(PIMIND_CONTROLLER_HANDLERS.DIRECTORY_SEPARATOR."*.php");
+		$serialized_files = serialize($files);
+		if ($glob_signature != md5($serialized_files)) {
+			foreach ($files as $file) {
+				$parts = pathinfo($file);
+				$classname = $parts["filename"];
+				$basename  = $parts["basename"]; 
+				if (isset($this->_handlers[$basename])) {
+					// already instanciated
+				} else {
+					
+					include_once $file;
+					$new_handler = new $classname;
+					if (get_parent_class($new_handler) instanceof controller_handler) {
+						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
+					} else {
+						$this->_handlers[$basename] = $new_handler;
+						$new_handler->create($this);
+					}
+				}
+			}
+			
+			
+			$glob_signature = md5($serialized_files);
+		} else {
+			// glob signature matches, lets not rebuild the handlers.
+			return 1;
+		}
 	}
 	function log($message, $severity = 1) {
 		echo time(). "\t($severity)\t $message\n\r";
@@ -121,6 +179,7 @@ class controller {
 			} else {
 				// no state change.
 			}
+			$this->_event_broadcast($data);
 		} else {
 			$this->log("A raised event didn't json_decode nicely \t $jsondata",2);
 		}
@@ -145,8 +204,9 @@ class controller {
 			}
 			if ($tick % $this->_poll_delay == 1) {
 				$this->log("Running a state check");
-                                $this->run_state_check();
+                $this->run_state_check();
 			}
+			$this->_tick_broadcast();
 			usleep($this->_poll_delay);
 		}
 		$this->log("Shutdown signalled.  Exiting realtime.");
