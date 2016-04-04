@@ -196,8 +196,8 @@ class controller {
 			$this->log("Got an event on pin " . $data->pin. " with state " . $data->state,5);
 			if ($sensor->event($data)) {
 				//sensors return true if there was a state change
-				$this->log("Running a state check");
-				$this->run_state_check();
+				//$this->log("Running a state check");
+				//$this->run_state_check();
 		
 			} else {
 				// no state change.
@@ -233,8 +233,8 @@ class controller {
 				}
 			}
 			if ($tick % $this->_poll_delay == 1) {
-				$this->log("Running a state check");
-                $this->run_state_check();
+				//$this->log("Running a state check");
+                //$this->run_state_check();
 			}
 			$this->_tick_broadcast();
 			usleep($this->_poll_delay);
@@ -252,26 +252,7 @@ class controller {
 			}
 		}
 	}
-	function run_state_check() {
-		$zone_assertion = array();
-		foreach ($this->_sensors as $sensor) {
-			if (!isset($zone_assertion[$sensor->zone])) {
-				$zone_assertion[$sensor->zone] = array();
-			}
-			if ($sensor->get_state() == 1) {
-				$zone_assertion[$sensor->zone][]  = $sensor->pin;;//$zone_assertion[$sensor->zone] & $sensor->get_state();
-			}
-		}
-		foreach ($zone_assertion as $zone => $pins){
-			foreach ($pins as $pin) {	
-				if ($this->_zone_state[$zone] == ARMED) {
-					$this->log("ALARM TRIPPED.  Zone $zone, pin $pin, " .$this->_sensors[$pin]->name,10); 
-				} else {
-					$this->log("Zone Activity. Zone $zone, pin $pin,  ". $this->_sensors[$pin]->name);
-				}
-			}
-		}
-	}
+
 }
 
 // bring in common paths
