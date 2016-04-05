@@ -12,6 +12,8 @@ class whoshome extends controller_handler {
 	
 	private $_validmacs = array();
 	private $_configuration = array();
+	private $_is_home = array();
+	private $_away_timeout = 1 * 60;
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
@@ -26,9 +28,23 @@ class whoshome extends controller_handler {
 		foreach ($states as $sensor_group_name => $pins) {
 			foreach ($pins as $pin =>$macs) {
 				foreach ($macs as $mac => $mac_states ) {
-					$this->_controller->log("$mac = " . $mac_states["state"]);
+					if (isset($this->_validmacs[$mac])) {
+						if ($mac_states["state"] == 1) {
+							if (!isset($this->_is_home[$mac])) {
+								$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has arrived");
+							}
+							
+							$this->_is_home[$mac] = time();
+						}
+					}
 				}
 			}
+		}
+		
+		foreach ($this->_is_home as $mac => $time) {
+			if ((time + $this->_away_timeout) < time()) {
+				$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has not been seen for ". $this->_away_timeout. " seconds");
+			} 
 		}
 		/**
 		 *  [90:B6:86:5C:0C:01] => Array
