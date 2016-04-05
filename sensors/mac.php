@@ -47,11 +47,14 @@ class mac_sensor {
 		
 		$data["type"] = 2; // raw input data messages are type 0.
 		$data["label"] = "exec(nmap)";
-		$data["class"] =get_class($this);
-		$data["data"] = array($mac,$ip);
 		$data["ts"] = time();
+		$data["data"] = array($mac,$ip);
 		$data["state"] = $state;
+		$data["class"] =get_class($this);
 		$data["sensor_group"] = $this->_configuration["sensor_group"];
+		
+		
+		
 		$json =  json_encode($data);
 		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json) . "&secret=" .urlencode($this->_secret)); 
 	}
