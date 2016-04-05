@@ -158,9 +158,13 @@ class controller {
 		}
 	}
 	function get_handler($handler_name) {
+		$this->log("Getting $handler_name");
+		
 		if (isset($this->_handlers[$handler_name])) {
 			return $this->_handlers[$handler_name];
 		}
+		
+		print_r($this->_handlers);
 		return 0;
 	}
 	function log($message, $severity = 1) {
