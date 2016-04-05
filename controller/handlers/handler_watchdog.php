@@ -30,7 +30,7 @@ class handler_watchdog extends controller_handler {
 					break;
 				case 2:
 					if (is_array($data->data)) {
-						$data->data = implode(",".$data->data);
+						$data->data = implode(",",$data->data);
 					}
 					$this->_controller->log("watchdog sees an identity event: " . implode(", ", get_object_vars($data)));
 					break;
