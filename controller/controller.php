@@ -157,6 +157,12 @@ class controller {
 			return 1;
 		}
 	}
+	function get_handler($handler_name) {
+		if (isset($this->_handlers[$handler_name])) {
+			return $this->_handlers[$handler_name];
+		}
+		return 0;
+	}
 	function log($message, $severity = 1) {
 		echo time(). "\t($severity)\t $message\n\r";
 		syslog($severity, "controller.php:" . $message);

@@ -11,14 +11,21 @@ class state_watcher extends controller_handler {
 	protected $_controller = null;
 	
 	private $_states = array();
-	
+	private $_state_file = PIMIND_STATE.DIRECTORY_SEPARATOR."state_watcher.serialized";
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
-		
+		if (file_exists($this->_state_file)) {
+			$this->_states = unserialize(file_get_contents($this->_state_file));
+		}
+	}
+	public function __destruct() {
+		$this->destroy();
 	}
 	public function destroy() {
-
+		if ($this->_states) {
+			file_put_contents($this->_state_file,serialize($this->_states));
+		}
 	}
 	public function event($data) {
 		
@@ -40,7 +47,7 @@ class state_watcher extends controller_handler {
 			}
 			
 		}
-		echo json_encode($this->_states);
+		//echo json_encode($this->_states);
 	}
 	public function tick() {
 	
