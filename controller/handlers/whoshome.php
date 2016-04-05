@@ -17,7 +17,7 @@ class whoshome extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
-		
+		$this->read_configuration();
 	}
 	public function destroy() {
 
