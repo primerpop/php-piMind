@@ -74,9 +74,6 @@ class mac_sensor {
 						$ips = $ips[1];
 					}
 					$mac_ip_map = array();
-					foreach ($macs as $key =>$mac){
-						$mac_ip_map[$mac] = $ips[$key];
-					}
 					
 					// loop once to update the active list
 					foreach ($macs as $mac) {
@@ -84,6 +81,7 @@ class mac_sensor {
 							$active_macs[$mac] = time();
 							$this->raise_event($mac, $mac_ip_map[$mac],1);
 							$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
+							$mac_ip_map[$mac] = $ips[$key];
 						}
 					}
 				
