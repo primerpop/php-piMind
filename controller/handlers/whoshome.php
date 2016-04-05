@@ -25,7 +25,7 @@ class whoshome extends controller_handler {
 		$states = $state_watcher->get_states()["mac_sensor"];
 		foreach ($states as $sensor_group_name => $pins) {
 			foreach ($pins as $mac =>$mac_states) {
-				$this->_controller->log("$mac = " . $mac_states[""]);
+				$this->_controller->log("$mac = " . $mac_states["state"]);
 			}
 		}
 		/**
