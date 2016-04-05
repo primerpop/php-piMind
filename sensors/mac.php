@@ -80,10 +80,11 @@ class mac_sensor {
 					foreach ($macs as $key => $mac) {
 						if ($mac) {
 							if (!isset($active_macs[$mac])) {
+								$mac_ip_map[$mac] = $ips[$key];
 								$active_macs[$mac] = time();
 								$this->raise_event($mac, $mac_ip_map[$mac],1);
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
-								$mac_ip_map[$mac] = $ips[$key];
+								
 							}
 						}
 					}
