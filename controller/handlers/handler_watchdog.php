@@ -21,6 +21,8 @@ class handler_watchdog extends controller_handler {
 	}
 	public function event($data) {
 		if (isset($data->type)) {
+			$class = $data->class;
+			
 			switch ($data->type) {
 				case 0:
 					$this->_controller->log("watchdog sees a sensor event: " .implode(", ", get_object_vars($data)));

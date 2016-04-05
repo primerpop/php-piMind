@@ -28,44 +28,11 @@ class sensor {
 	public function get_state() {
 		return $this->state;
 	}
-	public function event($data) {
-		if (isset($data->sensor_group)) {
-			if ($this->sensor_group == "") {
-				$this->sensor_group = $data->sensor_group;
-			}
-		}
-		if (isset($data->state)) {
-			if ($data->state != $this->state) {
-				// new state is different from the last.
-				if ($this->state == 1) {
-					if (!$this->sticky_state_change) {
-						$this->state = $data->state;
-						$this->last_state_change_ts = $data->ts;
-						return 1;
-	
-					} else {
-						// if we get set we don't get unset in sticky mode.
-						if (!$this->state){
-						$this->state = 1;//$data->state;
-						$this->last_state_change_ts = $data->ts;
-						return 1;	
-						}
-					}
-				}else {
-					$this->state = $data->state;
-					$this->last_state_change_ts = $data->ts;
-					return 1;
-	
-				}
-			}
-		}		
-		return 0;
-	} 
+	 
 }
 
 class controller {
-	private $_zone_state = array();
-	private $_sensors = array();
+	
 	private $_shutdown = 0;
 	private $_message_queue_id;
 	private $_poll_delay = 5000;
@@ -74,21 +41,6 @@ class controller {
 
 	public function __construct($controller_config_file ="controller.ini",$sensor_config_file ="sensors.ini") {
 		$this->log("piMind Event Controller started");
-		$config = parse_ini_file($sensor_config_file,true);
-		$this->log("Reading $sensor_config_file");
-		if (!$config) {
-			$this->log("Could not find a config file to read");
-			$this->_shutdown = 1;
-		}
-		foreach ($config as $name => $details) {
-			$sensor = new sensor;
-			foreach ($details as $prop => $value) {
-				$sensor->$prop = $value;
-			}
-			$this->_sensors[$sensor->pin] = $sensor;
-			$this->log("Adding Sensor for pin " . $sensor->pin);
-
-		}
 		$this->_setup_handlers();
 		$config = parse_ini_file($controller_config_file);
 		foreach ($config as $prop => $value) {
@@ -138,19 +90,17 @@ class controller {
 				if (isset($this->_handlers[$classname])) {
 					// already instanciated
 				} else {
-					
 					include_once $file;
 					$new_handler = new $classname;
 					if (get_parent_class($new_handler) instanceof controller_handler) {
 						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
 					} else {
 						$this->_handlers[$classname] = $new_handler;
-						$new_handler->create($this);
+						$handler_create = $new_handler->create($this);
+						$this->log("$new_handler->create() = $handler_create");
 					}
 				}
 			}
-			
-			
 			$glob_signature = md5($serialized_files);
 		} else {
 			// glob signature matches, lets not rebuild the handlers.
@@ -158,61 +108,29 @@ class controller {
 		}
 	}
 	function get_handler($handler_name) {
-		$this->log("Getting $handler_name");
-		
 		if (isset($this->_handlers[$handler_name])) {
 			return $this->_handlers[$handler_name];
 		}
-		
-		
 		return 0;
 	}
 	function log($message, $severity = 1) {
-		echo time(). "\t($severity)\t $message\n\r";
+		echo time(). ": ($severity) : $message\n\r";
 		syslog($severity, "controller.php:" . $message);
 	}
-	function get_sensors() {
-		return $this->_sensors;
-	}
-	function generate_handler_event($handler_name, $sensor,$event_code, $event_message,$state) {
+	
+	function generate_handler_event($handler_name,$pin, $label, $event_code, $event_message,$state) {
 		$msg = new stdClass();
 		$msg->source_handler = $handler_name;
 		$msg->type = EVENT_TYPE_HANDLER;
 		$msg->ts = time();
-		$msg->pin = $sensor->pin;
+		$msg->pin = $pin;
 		$msg->state = $state;
-		if (isset($sensor->name)){
-			$msg->label = $sensor->name;
-		}
-		if (isset($sensor->zone)){
-			$msg->zone =$sensor->zone;
-		}
+		$msg->label = $label;
 		$msg->event_code = $event_code;
 		$msg->event_message= $event_message; 
 		return $msg;	
 	}
 	function event($data) {
-		if (isset($data->type) && !$data->type) {
-			if (isset($this->_sensors[$data->pin])) {
-				$sensor =  $this->_sensors[$data->pin];
-			} else {
-				// undefined sensor sent data.
-				$sensor = new sensor;
-				$sensor->pin = $data->pin;
-		
-				$this->log("A phantom sensor raised data on pin " .$data->pin,2);
-				$this->_sensors[$data->pin] = $sensor;
-			}
-			$this->log("Got an event on pin " . $data->pin. " with state " . $data->state,5);
-			if ($sensor->event($data)) {
-				//sensors return true if there was a state change
-				//$this->log("Running a state check");
-				//$this->run_state_check();
-		
-			} else {
-				// no state change.
-			}
-		}
 		$this->_event_broadcast($data);
 	}
 	function event_sink($jsondata) {
@@ -249,20 +167,25 @@ class controller {
 			$this->_tick_broadcast();
 			usleep($this->_poll_delay);
 		}
+		//$this->handle_cli();
 		$this->log("Shutdown signalled.  Exiting realtime.");
 	}
-	function set_zone_state($zone_id, $new_state) {
-		$this->_zone_state[$zone_id] = $new_state;
-		$this->log("Zone $zone_id set to state $new_state");
-		if ($new_state == ARMED) {
-			foreach ($this->_sensors as $sensor) {
-				if ($sensor->zone == $zone_id){
-					$sensor->sticky_state_change = 1;
-				}
-			}
-		}
+	function handle_cli(){
+		static $keyboard_buffer = "";
+		
+		$char = $this->_non_block_read(non_block_read(STDIN, $x));
+		echo $char;
 	}
-
+	function _non_block_read($fd, &$data) {
+	    $read = array($fd);
+	    $write = array();
+	    $except = array();
+	    $result = stream_select($read, $write, $except, 0);
+	    if($result === false) throw new Exception('stream_select failed');
+	    if($result === 0) return false;
+	    $data = stream_get_line($fd, 1);
+	    return true;
+	}
 }
 
 // bring in common paths
@@ -273,9 +196,5 @@ include(PIMIND_HOME."/constants.php");
 chdir(PIMIND_CONFIG);
 
 $controller = new controller;
-//$controller->event_sink("{\"pin\":4,\"label\":\"Garage Door\",\"ts\":1459462111,\"state\":\"0\"}");
-$controller->set_zone_state(1,STANDBY);
-$controller->set_zone_state(2,STANDBY);
-
 $controller->realtime();
 ?>

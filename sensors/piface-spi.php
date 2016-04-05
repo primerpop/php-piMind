@@ -29,6 +29,7 @@ class piface_spi {
 	private $_debug;
 	private $_shutdown = 0;
 	private $_secret = "";
+	private $_invert_state = 0;
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -64,6 +65,10 @@ class piface_spi {
 		$json =  json_encode($data);
 		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json) . "&secret=" .urlencode($this->_secret)); 
 	}
+	/**
+	 * Realtime sensor monitoring loop
+	 * @return number
+	 */
 	function realtime() {
 		$pin_map = $this->_pin_map;
 		$ignore_pins = $this->_ignore_pins; 
@@ -99,14 +104,23 @@ class piface_spi {
 					$this->_last_state[$pin] = 0;
 				}
 		
-			    	$value = $inputPin->getValue();
-				if ($value == 1) {
-					$value = 0;
-					$led->turnOff();
-				} else {
-					$value = 1;
-					$led->turnOn();
-				}
+			    $value = $inputPin->getValue();
+			    
+			    if ($this->_invert_state == 1) {
+			    
+					if ($value == 1) {
+						$value = 0;
+						$led->turnOff();
+					} else {
+						$value = 1;
+						$led->turnOn();
+					}
+			    }
+			    if (!$value) {
+			    	$led->turnOff();
+			    } else {
+			    	$led->turnOn();
+			    }
 				if ($value != $this->_last_state[$pin]) {
 			        $this->log("Event on ".$label . "($pin) = $value. LS = " . $this->_last_state[$pin]);
 					$this->_last_state[$pin] = $value;
@@ -139,7 +153,10 @@ class piface_spi {
 	function read_configuration() {
 	
 		$this->_configuration = parse_ini_file(PIMIND_CONFIG .DIRECTORY_SEPARATOR . "piface-spi.ini");
-	
+		
+		if (isset($this->_configuration["invert_state"])) {
+			$this->_invert_state = $this->_configuration["invert_state"];
+		}
 		if (isset($this->_configuration["ignore_pins"])) {
 			
 			$this->_ignore_pins = explode(",",$this->_configuration["ignore_pins"] );
@@ -174,8 +191,3 @@ class piface_spi {
 
 $piface = new piface_spi();
 $piface->realtime();
-
-
-//$_spi_dev->getLeds()[0]->turnOn();
-//sleep(2);
-//$_spi_dev->getLeds()[0]->turnOff();
