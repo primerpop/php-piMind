@@ -23,7 +23,35 @@ class whoshome extends controller_handler {
 	private function _build_whoshome() {
 		$state_watcher = $this->_controller->get_handler("state_watcher");
 		$states = $state_watcher->get_states()["mac_sensor"];
-		print_r($states);
+		foreach ($states as $sensor_group_name => $pins) {
+			foreach ($pins as $mac =>$mac_states) {
+				$this->_controller->log("$mac = " . $mac_states[null]);
+			}
+		}
+		/**
+		 *   [Basement pi MAC Scanner] => Array
+        (
+            [0] => Array
+                (
+                    [88:63:DF:DD:1E:C0] => Array
+                        (
+                            [88:63:DF:DD:1E:C0] => 1459826190
+                            [192.168.255.160] => 1
+                            [] => 0
+                        )
+
+                    [84:38:38:E7:16:91] => Array
+                        (
+                            [84:38:38:E7:16:91] => 1459826191
+                            [] => 0
+                            [192.168.255.164] => 1
+                        )
+
+                )
+
+        )
+
+		 */
 	}
 	function read_configuration() {
 	
