@@ -77,7 +77,7 @@ class mac_sensor {
 					
 					
 					// loop once to update the active list
-					foreach ($macs as $mac) {
+					foreach ($macs as $key => $mac) {
 						if ($mac) {
 							if (!isset($active_macs[$mac])) {
 								$active_macs[$mac] = time();
