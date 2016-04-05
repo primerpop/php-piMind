@@ -75,13 +75,16 @@ class mac_sensor {
 					}
 					$mac_ip_map = array();
 					
+					
 					// loop once to update the active list
 					foreach ($macs as $mac) {
-						if (!isset($active_macs[$mac])) {
-							$active_macs[$mac] = time();
-							$this->raise_event($mac, $mac_ip_map[$mac],1);
-							$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
-							$mac_ip_map[$mac] = $ips[$key];
+						if ($mac) {
+							if (!isset($active_macs[$mac])) {
+								$active_macs[$mac] = time();
+								$this->raise_event($mac, $mac_ip_map[$mac],1);
+								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
+								$mac_ip_map[$mac] = $ips[$key];
+							}
 						}
 					}
 				
