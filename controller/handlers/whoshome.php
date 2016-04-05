@@ -13,7 +13,7 @@ class whoshome extends controller_handler {
 	private $_validmacs = array();
 	private $_configuration = array();
 	private $_is_home = array();
-	private $_away_timeout = 1 * 60;
+	private $_away_timeout = 60;
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
