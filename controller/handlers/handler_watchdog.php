@@ -29,6 +29,8 @@ class handler_watchdog extends controller_handler {
 					$this->_controller->log("watchdog sees a handler event: " . implode(", ", get_object_vars($data)));
 					break;
 				case 2:
+					$data->data = implode(",".$data->data);
+					
 					$this->_controller->log("watchdog sees an identity event: " . implode(", ", get_object_vars($data)));
 					break;
 			}
