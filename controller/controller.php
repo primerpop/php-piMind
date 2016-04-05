@@ -164,7 +164,7 @@ class controller {
 			return $this->_handlers[$handler_name];
 		}
 		
-		print_r($this->_handlers);
+		
 		return 0;
 	}
 	function log($message, $severity = 1) {
