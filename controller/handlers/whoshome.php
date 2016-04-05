@@ -24,11 +24,20 @@ class whoshome extends controller_handler {
 		$state_watcher = $this->_controller->get_handler("state_watcher");
 		$states = $state_watcher->get_states()["mac_sensor"];
 		foreach ($states as $sensor_group_name => $pins) {
-			foreach ($pins as $mac =>$mac_states) {
+			foreach ($pins as $pin =>$macs) {
+				foreach ($macs as $mac => $mac_states ) {
 				$this->_controller->log("$mac = " . $mac_states[$mac]["state"]);
 			}
 		}
 		/**
+		 *  [90:B6:86:5C:0C:01] => Array
+        (
+            [90:B6:86:5C:0C:01] => 1459827476
+            [state] => 1
+            [ip] => 192.168.255.162
+        )
+
+	
 		 *   [Basement pi MAC Scanner] => Array
         (
             [0] => Array
