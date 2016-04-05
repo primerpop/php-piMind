@@ -29,10 +29,15 @@ class handler_watchdog extends controller_handler {
 					$this->_controller->log("watchdog sees a handler event: " . implode(", ", get_object_vars($data)));
 					break;
 				case 2:
+					$old_data =null;
 					if (is_array($data->data)) {
+						$old_data = $data->data;
 						$data->data = implode(",",$data->data);
 					}
 					$this->_controller->log("watchdog sees an identity event: " . implode(", ", get_object_vars($data)));
+					if ($old_data != NULL) {
+						$data->data = $old_data;
+					}
 					break;
 			}
 			
