@@ -44,7 +44,9 @@ class whoshome extends controller_handler {
 		foreach ($this->_is_home as $mac => $time) {
 			if (($time + $this->_away_timeout) < time()) {
 				$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has not been seen for ". $this->_away_timeout. " seconds");
+				unset($this->_is_home[$mac]);
 			} 
+			
 		}
 		/**
 		 *  [90:B6:86:5C:0C:01] => Array
