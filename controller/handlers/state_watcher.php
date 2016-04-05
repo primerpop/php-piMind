@@ -21,11 +21,11 @@ class state_watcher extends controller_handler {
 
 	}
 	public function event($data) {
-		print_r($data);
+		
 		if (isset($data->type)) {
 			switch ($data->type) {
 				case EVENT_TYPE_SENSOR:
-					$this->_states[$data->sensor_group][$data->pin] = $data->state;
+					$this->_states[$data->sensor_group][$data->pin][$data->label] = $data->state;
 					break;
 				case EVENT_TYPE_HANDLER:
 					break;
@@ -40,7 +40,7 @@ class state_watcher extends controller_handler {
 			}
 			
 		}
-		print_r($this->_states);
+		echo json_encode($this->_states);
 	}
 	public function tick() {
 	
