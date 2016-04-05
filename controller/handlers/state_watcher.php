@@ -21,6 +21,7 @@ class state_watcher extends controller_handler {
 
 	}
 	public function event($data) {
+		print_r($data);
 		if (isset($data->type)) {
 			switch ($data->type) {
 				case EVENT_TYPE_SENSOR:
@@ -34,7 +35,7 @@ class state_watcher extends controller_handler {
 			}
 			
 		}
-		$print_r($this->_states);
+		print_r($this->_states);
 	}
 	public function tick() {
 	
