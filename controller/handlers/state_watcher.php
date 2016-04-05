@@ -24,6 +24,9 @@ class state_watcher extends controller_handler {
 		$this->destroy();
 	}
 	public function destroy() {
+		$this->save_state;
+	}
+	function save_state() {
 		if ($this->_states) {
 			file_put_contents($this->_state_file,serialize($this->_states));
 		}
@@ -34,19 +37,21 @@ class state_watcher extends controller_handler {
 			switch ($data->type) {
 				case EVENT_TYPE_SENSOR:
 					$this->_states[$data->sensor_group][$data->pin][$data->label] = $data->state;
+					$this->_states[$data->sensor_group."_timestamps"][$data->pin][$data->label] = time();
 					break;
 				case EVENT_TYPE_HANDLER:
 					break;
 				case EVENT_TYPE_VARDATA:
 					switch ($data->class) {
 						case "mac_sensor":
+							$this->_states[$data->sensor_group][$data->pin][$data->data[0]][$data->data[0]] = time();
 							$this->_states[$data->sensor_group][$data->pin][$data->data[0]][$data->data[1]] = $data->state;
 							break;
 					}
 					
 					break;
 			}
-			
+			$this->save_state;
 		}
 		//echo json_encode($this->_states);
 	}
