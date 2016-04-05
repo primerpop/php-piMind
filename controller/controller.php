@@ -144,7 +144,7 @@ class controller {
 					if (get_parent_class($new_handler) instanceof controller_handler) {
 						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
 					} else {
-						$this->_handlers[$basename] = $new_handler;
+						$this->_handlers[$filename] = $new_handler;
 						$new_handler->create($this);
 					}
 				}
