@@ -30,7 +30,12 @@ class state_watcher extends controller_handler {
 				case EVENT_TYPE_HANDLER:
 					break;
 				case EVENT_TYPE_VARDATA:
-					$this->_states[$data->sensor_group][$data->pin] = $data->data;
+					switch ($data->class) {
+						case "mac_sensor":
+							$this->_states[$data->sensor_group][$data->pin][$data->data[0]] = $data->state;
+							break;
+					}
+					
 					break;
 			}
 			
