@@ -135,7 +135,7 @@ class controller {
 				$parts = pathinfo($file);
 				$classname = $parts["filename"];
 				$basename  = $parts["basename"]; 
-				if (isset($this->_handlers[$basename])) {
+				if (isset($this->_handlers[$classname])) {
 					// already instanciated
 				} else {
 					
@@ -144,7 +144,7 @@ class controller {
 					if (get_parent_class($new_handler) instanceof controller_handler) {
 						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
 					} else {
-						$this->_handlers[$filename] = $new_handler;
+						$this->_handlers[$classname] = $new_handler;
 						$new_handler->create($this);
 					}
 				}
