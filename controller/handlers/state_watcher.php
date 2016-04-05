@@ -24,7 +24,7 @@ class state_watcher extends controller_handler {
 		$this->destroy();
 	}
 	public function destroy() {
-		$this->save_state;
+		$this->save_state();
 	}
 	function save_state() {
 		if ($this->_states) {
@@ -51,7 +51,7 @@ class state_watcher extends controller_handler {
 					
 					break;
 			}
-			$this->save_state;
+			$this->save_state();
 		}
 		//echo json_encode($this->_states);
 	}
