@@ -36,9 +36,10 @@ class whoshome extends controller_handler {
 								$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has arrived");
 								$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
 								$this->_controller->event($message);
+								$this->_is_home[$mac] = time();
 							}
 							
-							$this->_is_home[$mac] = time();
+							
 						}
 					}
 				}
