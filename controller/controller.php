@@ -121,6 +121,7 @@ class controller {
 	function generate_handler_event($handler_name,$pin, $label, $event_code, $event_message,$state) {
 		$msg = new stdClass();
 		$msg->source_handler = $handler_name;
+		$msg->class = get_class($this);
 		$msg->type = EVENT_TYPE_HANDLER;
 		$msg->ts = time();
 		$msg->pin = $pin;
