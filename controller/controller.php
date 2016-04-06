@@ -187,6 +187,7 @@ class controller {
 	    $data = stream_get_line($fd, 1);
 	    return true;
 	}
+	
 }
 
 // bring in common paths

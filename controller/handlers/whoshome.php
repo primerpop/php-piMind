@@ -13,7 +13,9 @@ class whoshome extends controller_handler {
 	private $_validmacs = array();
 	private $_configuration = array();
 	private $_is_home = array();
-	private $_away_timeout = 60;
+	private $_away_timeout = 120;
+	const home_user_arrived = 1;
+	const home_user_departed = 2;
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
@@ -32,6 +34,8 @@ class whoshome extends controller_handler {
 						if ($mac_states["state"] == 1) {
 							if (!isset($this->_is_home[$mac])) {
 								$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has arrived");
+								$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
+								$this->_controller->event($message);
 							}
 							
 							$this->_is_home[$mac] = time();
@@ -45,6 +49,8 @@ class whoshome extends controller_handler {
 			if (($time + $this->_away_timeout) < time()) {
 				$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has not been seen for ". $this->_away_timeout. " seconds");
 				unset($this->_is_home[$mac]);
+				$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_departed,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has departed",1);
+				$this->_controller->event($message);
 			} 
 			
 		}
