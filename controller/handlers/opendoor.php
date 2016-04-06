@@ -25,21 +25,27 @@ class opendoor extends controller_handler {
 	
 	}
 	public function event($data) {
-		return 0;
-		if ($data) {
-			$sensor= $this->_sensors[$data->pin];
-			
-			if ($sensor->type == SENSORTYPE_DOORSWITCH) {
-				if (!isset($this->_door_states[$data->pin]) && $sensor->state == 1) {
-					$this->_door_states[$data->pin] = time() + $this->_opendoor_delay;
-					$this->_controller->log("opendoor: watching opendoor on " . $data->pin . ".  Alarm set at " . $this->_door_states[$data->pin]);
-				} elseif (isset($this->_door_states[$data->pin]) && $sensor->state == 0) {
-					unset($this->_door_states[$data->pin]);
-					$this->_controller->log("opendoor: no longer watching opendoor on " . $data->pin . ".  Alarm cleared.");
-				} else {
-					
-				}	
+		$state_watcher = $this->_controller->get_handler("state_watcher");
+		$states = $state_watcher->get_states()["piface_spi"];
+		
+		if (true) {
+			foreach ($states as $sensor_group_name => $pins) {
+				foreach ($pins as $pin =>$labels) {
+					foreach ($labels as $label => $state ) {
+						$current_state = $state;
+						if (!isset($this->_door_states[$data->pin]) && $current_state == 1) {
+							$this->_door_states[$pin] = time() + $this->_opendoor_delay;
+							$this->_controller->log("opendoor: watching opendoor on $sensor_group_name." . $pin . ".  Alarm set at " . $this->_door_states[$pin]);
+						} elseif (isset($this->_door_states[$pin]) && $current_state == 0) {
+							unset($this->_door_states[$pin]);
+							$this->_controller->log("opendoor: no longer watching opendoor on $sensor_group_name" . $pin . ".  Alarm cleared.");
+						} else {
+								
+						}
+					}
+				}
 			}
+			
 		}
 	}
 	public function tick() {
