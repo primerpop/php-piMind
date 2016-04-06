@@ -58,6 +58,24 @@ class mac_sensor {
 		$json =  json_encode($data);
 		return file_get_contents($this->_redirector_url . "?action=event&data=" .urlencode($json) . "&secret=" .urlencode($this->_secret)); 
 	}
+	function ping ($host, $timeout = 1) {
+		/* ICMP ping packet with a pre-calculated checksum */
+		$package = "\x08\x00\x7d\x4b\x00\x00\x00\x00PingHost";
+		$socket = socket_create(AF_INET, SOCK_RAW, 1);
+		socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $timeout, 'usec' => 0));
+		socket_connect($socket, $host, null);
+	
+		$ts = microtime(true);
+		socket_send($socket, $package, strLen($package), 0);
+		if (socket_read($socket, 255)) {
+			$result = microtime(true) - $ts;
+		} else {
+			$result = false;
+		}
+		socket_close($socket);
+	
+		return $result;
+	}
 	function realtime() {
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
 		while (!$this->_shutdown) {
@@ -84,10 +102,12 @@ class mac_sensor {
 						if ($mac) {
 							if (!isset($active_macs[$mac])) {
 								$mac_ip_map[$mac] = $ips[$key];
-								$active_macs[$mac] = time();
-								$this->raise_event($mac, $mac_ip_map[$mac],1);
-								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
-								
+								if ($this->ping($ips[$key]))
+									$active_macs[$mac] = time();
+									$this->raise_event($mac, $mac_ip_map[$mac],1);
+									$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
+							} else{
+								$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping.");
 							}
 						}
 					}
