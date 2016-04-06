@@ -37,11 +37,11 @@ class opendoor extends controller_handler {
 				foreach ($pins as $pin =>$labels) {
 					foreach ($labels as $label => $state ) {
 						$current_state = $state;
-						if (!isset($this->_door_states[$data->pin]) && $current_state == 1) {
+						if (!isset($this->_door_states["/".$sensor_group_name."/".$pin]) && $current_state == 1) {
 							$this->_door_states["/".$sensor_group_name."/".$pin] = time() + $this->_opendoor_delay;
-							$this->_controller->log("opendoor: watching opendoor on /$sensor_group_name" . "/".$pin."/" .$label. ".  Alarm set at " . $this->_door_states[$pin]);
+							$this->_controller->log("opendoor: watching opendoor on /$sensor_group_name" . "/".$pin."/" .$label. ".  Alarm set at " . $this->_door_states["/".$sensor_group_name."/".$pin]);
 						} elseif (isset($this->_door_states["/".$sensor_group_name."/".$pin]) && $current_state == 0) {
-							unset($this->_door_states[$pin]);
+							unset($this->_door_states["/".$sensor_group_name."/".$pin]);
 							$this->_controller->log("opendoor: no longer watching opendoor on /$sensor_group_name/" . $pin ."/" .$label. ".  Alarm cleared.");
 						} else {
 								
