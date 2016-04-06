@@ -97,7 +97,7 @@ class controller {
 					} else {
 						$this->_handlers[$classname] = $new_handler;
 						$handler_create = $new_handler->create($this);
-						$this->log("$classname->create() = $handler_create");
+						$this->log("$classname"."->create() = $handler_create");
 					}
 				}
 			}
