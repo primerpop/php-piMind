@@ -26,9 +26,11 @@ class opendoor extends controller_handler {
 	}
 	public function event($data) {
 		$state_watcher = $this->_controller->get_handler("state_watcher");
-		$states = $state_watcher->get_states()["piface_spi"];
-		
-		if (true) {
+		$all_states = $state_watcher->get_states();//["piface_spi"];
+		if (isset($all_states["piface_spi"])) {
+			$states = $all_states["piface_spi"];
+		}
+		if ($states) {
 			foreach ($states as $sensor_group_name => $pins) {
 				foreach ($pins as $pin =>$labels) {
 					foreach ($labels as $label => $state ) {
