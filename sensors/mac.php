@@ -102,12 +102,14 @@ class mac_sensor {
 						if ($mac) {
 							if (!isset($active_macs[$mac])) {
 								$mac_ip_map[$mac] = $ips[$key];
-								if ($this->ping($ips[$key]))
+								$ping = $this->ping($ips[$key]);
+								if ($ping) {
 									$active_macs[$mac] = time();
 									$this->raise_event($mac, $mac_ip_map[$mac],1);
-									$this->log("MAC $mac (".$mac_ip_map[$mac].") seen.");
-							} else{
-								$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping.");
+									$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
+								} else{
+									$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping. $ping ms");
+								}
 							}
 						}
 					}
