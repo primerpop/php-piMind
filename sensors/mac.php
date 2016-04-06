@@ -95,7 +95,9 @@ class mac_sensor {
 						$ips = $ips[1];
 					}
 					$mac_ip_map = array();
+					var_dump($macs);
 					
+					var_dump($ips);
 					
 					// loop once to update the active list
 					foreach ($macs as $key => $mac) {
