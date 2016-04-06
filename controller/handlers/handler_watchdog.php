@@ -13,7 +13,7 @@ class handler_watchdog extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler watchdog initialized");
-		
+		return 1;
 	}
 	public function destroy() {
 

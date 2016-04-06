@@ -15,10 +15,12 @@ class state_watcher extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_state_file = PIMIND_STATE.DIRECTORY_SEPARATOR."state_watcher.serialized";
 		$this->_controller = $controller_pointer;
-		$this->_controller->log("handler template initialized");
+		$this->_controller->log("state_watcher initialized");
 		if (file_exists($this->_state_file)) {
 			$this->_states = unserialize(file_get_contents($this->_state_file));
 		}
+		
+		return 1;
 	}
 	public function __destruct() {
 		$this->destroy();

@@ -13,7 +13,7 @@ class handler_template extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
-		
+		return 1;
 	}
 	public function destroy() {
 

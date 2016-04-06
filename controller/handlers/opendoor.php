@@ -18,7 +18,7 @@ class opendoor extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("opendoor handler initialized");
-		
+		return 1;
 	//	print_r($this->_sensors);
 	}
 	public function destroy() {

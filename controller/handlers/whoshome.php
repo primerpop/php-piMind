@@ -19,7 +19,7 @@ class whoshome extends controller_handler {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
-		$this->read_configuration();
+		return $this->read_configuration();
 	}
 	public function destroy() {
 
@@ -95,7 +95,10 @@ class whoshome extends controller_handler {
 		foreach($this->_configuration as $mac => $name) {
 			$this->_validmacs[$mac]= $name; 
 		}
-	
+		if ($this->_configuration) {
+			return 1;
+		}
+		return 0;
 	}
 	public function event($data) {
 		if (isset($data->type)) {
