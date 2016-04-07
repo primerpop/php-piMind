@@ -26,7 +26,7 @@ class mac_sensor {
 	private $_debug;
 	private $_shutdown = 0;
 	private $_secret = "";
-	private $_nmap_cmd = "";
+	private $_arp_cmd = "";
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -76,25 +76,30 @@ class mac_sensor {
 	
 		return $result;
 	}
+	function arp_dump(){
+		$output = exec($this->_arp_cmd);
+		
+		
+		if (preg_match_all('/([A-F0-9:]+)"/',$output ,$macs) ) {
+			$macs = $macs[1];
+		}
+		
+		$ips=array();
+		if (preg_match_all('/([A-F0-9.]+)"/',$output ,$ips) ) {
+			$ips = $ips[1];
+		}
+		
+		exit;
+	}
 	function realtime() {
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
 		while (!$this->_shutdown) {
 			
 			$active_macs = array();
 			while (true) {
-				exec($this->_nmap_cmd ." ". PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
-				$file = file_get_contents(PIMIND_STATE.DIRECTORY_SEPARATOR."mac.nmap");
-				if ($file) {
-					$macs=array();
-					if (preg_match_all('/([A-F0-9:]+)" addrtype="mac"/',$file ,$macs) ) {
-						$macs = $macs[1];
-					}
-					
-					$ips=array();
-					if (preg_match_all('/([A-F0-9.]+)" addrtype="ipv4"/',$file ,$ips) ) {
-						$ips = $ips[1];
-					}
+				if(true) {
 					$mac_ip_map = array();
+					$this->arp_dump();
 					var_dump($macs);
 					
 					var_dump($ips);
@@ -154,8 +159,12 @@ class mac_sensor {
 		if (isset($this->_configuration["debug"])) {
 			$this->_debug = $this->_configuration["debug"];
 		}
-		if (isset($this->_configuration["nmap_cmd"])) {
-			$this->_nmap_cmd = $this->_configuration["nmap_cmd"];
+		if (isset($this->_configuration["use"])) {
+			$this->_use = $this->_configuration["use"];
+			$this->cmd = $this->_use;
+		}
+		if (isset($this->_configuration["arp_cmd"])) {
+			$this->_arp_cmd = $this->_configuration["arp_cmd"];
 		}	
 		
 		if (isset($this->_configuration["secret"])) {
@@ -168,6 +177,7 @@ class mac_sensor {
 		} else {
 			$this->log("redirector_url is unset. Events will not be communicated.  It's your choice really, but this software is useless without something to catch events.");
 		}
+		
 		
 	}
 	
