@@ -37,7 +37,9 @@ class state_watcher extends controller_handler {
 		return $this->_states;
 	}
 	public function event($data) {
-		
+		static $event_counter = 0;
+		$event_counter++;
+		$this->_states["event_id"] = $event_counter;
 		if (isset($data->type)) {
 			switch ($data->type) {
 				case EVENT_TYPE_SENSOR:
