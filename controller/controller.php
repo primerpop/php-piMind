@@ -108,8 +108,9 @@ class controller {
 			foreach ($sort as $classname=>$order) {
 				$temp_handlers[$classname] = $this->_handlers[$classname];
 			}
-			$this->log("Now as: " , implode(",",array_keys($this->_handlers)));
 			$this->_handlers = $temp_handlers;
+			$this->log("Now as: " . implode(",",array_keys($this->_handlers)));
+			
 			$glob_signature = md5($serialized_files);
 		} else {
 			// glob signature matches, lets not rebuild the handlers.
