@@ -13,7 +13,7 @@ class whoshome extends controller_handler {
 	private $_validmacs = array();
 	private $_configuration = array();
 	private $_is_home = array();
-	private $_away_timeout = 120;
+	private $_away_timeout = 60;
 	const home_user_arrived = 1;
 	const home_user_departed = 2;
 	public function create($controller_pointer) {
@@ -25,8 +25,8 @@ class whoshome extends controller_handler {
 
 	}
 	private function _build_whoshome() {
-		$state_watcher = $this->_controller->get_handler("state_watcher");
-		$states = $state_watcher->get_states()["mac_sensor"];
+		$state_watcher = & $this->_controller->get_handler("state_watcher");
+		$states = & $state_watcher->get_states()["mac_sensor"];
 		foreach ($states as $sensor_group_name => $pins) {
 			foreach ($pins as $pin =>$macs) {
 				foreach ($macs as $mac => $mac_states ) {
@@ -119,7 +119,17 @@ class whoshome extends controller_handler {
 		}
 	}
 	public function tick() {
-	
+		static $last_check = 0;
+		
+		if (!$last_check) {
+			$last_check = time();
+			
+		}
+		
+		if (($last_check + $this->_away_timeout) < time() ) {
+			$last_check = time();
+			$this->_build_whoshome();
+		}
 	}
 
 
