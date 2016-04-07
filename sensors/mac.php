@@ -90,7 +90,7 @@ class mac_sensor {
 			$ip = str_replace(")","",str_replace("(","", $parts[1]));
 			$mac = $parts[3];
 			$ips[] = $ip;
-			$macs[] = $mac;
+			$macs[] = strtoupper($mac);
 		}
 		return array("ips"=>$ips, "macs"=>$macs);
 		
