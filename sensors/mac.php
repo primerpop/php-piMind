@@ -77,7 +77,7 @@ class mac_sensor {
 		return $result;
 	}
 	function arp_dump(){
-		$output = exec($this->_arp_cmd);
+		$output = system($this->_arp_cmd);
 		
 		
 		if (preg_match_all('/([A-F0-9:]+)"/',$output ,$macs) ) {
