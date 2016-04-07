@@ -121,6 +121,7 @@ class mac_sensor {
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
 							} else{
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping. $ping ms");
+								unset($macs[$mac]);
 							}
 						}
 					}
