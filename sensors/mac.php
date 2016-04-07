@@ -98,45 +98,45 @@ class mac_sensor {
 		while (!$this->_shutdown) {
 			
 			$active_macs = array();
-			while (true) {
-				if(true) {
-					$mac_ip_map = array();
-					$payload = $this->arp_dump();
-					$macs = $payload["macs"];
-					$ips = $payload["ips"];
-					
-					
-					
-					// loop once to update the active list
-					foreach ($macs as $key => $mac) {
-						if ($mac) {
-							if (!isset($active_macs[$mac])) {
-								$mac_ip_map[$mac] = $ips[$key];
-								$ping = $this->ping($ips[$key]);
-								if ($ping) {
-									$active_macs[$mac] = time();
-									$this->raise_event($mac, $mac_ip_map[$mac],1);
-									$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
-								} else{
-									$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping. $ping ms");
-								}
+			
+			if(true) {
+				$mac_ip_map = array();
+				$payload = $this->arp_dump();
+				$macs = $payload["macs"];
+				$ips = $payload["ips"];
+				
+				
+				
+				// loop once to update the active list
+				foreach ($macs as $key => $mac) {
+					if ($mac) {
+						if (!isset($active_macs[$mac])) {
+							$mac_ip_map[$mac] = $ips[$key];
+							$ping = $this->ping($ips[$key]);
+							if ($ping) {
+								$active_macs[$mac] = time();
+								$this->raise_event($mac, $mac_ip_map[$mac],1);
+								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
+							} else{
+								$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping. $ping ms");
 							}
 						}
 					}
-				
-					foreach ($active_macs as $mac => $timestamp) {
-						if (!in_array($mac, $macs)) {
-							
-							
-							$this->raise_event($mac,null, 0);
-							$this->log("MAC $mac went away. Was with us for ". (time() - $timestamp) . " seconds");
-							unset($active_macs[$mac]);
-						}
-					}
-				} else {
-					$this->log("can't read mac.nmap or file is empty.",6);
 				}
-			}			
+			
+				foreach ($active_macs as $mac => $timestamp) {
+					if (!in_array($mac, $macs)) {
+						
+						
+						$this->raise_event($mac,null, 0);
+						$this->log("MAC $mac went away. Was with us for ". (time() - $timestamp) . " seconds");
+						unset($active_macs[$mac]);
+					}
+				}
+			} else {
+				$this->log("can't read mac.nmap or file is empty.",6);
+			}
+					
 		    usleep($this->_configuration["usleep_poll_delay"]);
 		}
 		$this->log("Realtime loop shutdown condition");
