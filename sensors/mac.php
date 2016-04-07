@@ -80,7 +80,7 @@ class mac_sensor {
 		$output = array();
 		//run an nmap to freshen the ARP table with available devices.
 		$return = exec($this->_nmap_cmd);
-		sleep(1);
+		//sleep(1);
 		$return = exec($this->_arp_cmd, $output);//$this->_arp_cmd);
 		$ips = array();
 		$macs = array();
