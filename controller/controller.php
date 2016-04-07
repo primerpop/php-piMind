@@ -104,9 +104,11 @@ class controller {
 			}
 			arsort($sort);
 			$temp_handlers = array();
+			$this->log("re-ordering handler firing order");
 			foreach ($sort as $classname=>$order) {
 				$temp_handlers[$classname] = $this->_handlers[$classname];
 			}
+			$this->log("Now as: " , implode(",",array_keys($this->_handlers)));
 			$this->_handlers = $temp_handlers;
 			$glob_signature = md5($serialized_files);
 		} else {
