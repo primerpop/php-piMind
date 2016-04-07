@@ -159,10 +159,7 @@ class mac_sensor {
 		if (isset($this->_configuration["debug"])) {
 			$this->_debug = $this->_configuration["debug"];
 		}
-		if (isset($this->_configuration["use"])) {
-			$this->_use = $this->_configuration["use"];
-			$this->cmd = $this->_use;
-		}
+		
 		if (isset($this->_configuration["arp_cmd"])) {
 			$this->_arp_cmd = $this->_configuration["arp_cmd"];
 		}	
