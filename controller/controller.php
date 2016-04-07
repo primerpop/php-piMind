@@ -82,6 +82,7 @@ class controller {
 		$this->log("Setting up event handlers");		
 		$files = glob(PIMIND_CONTROLLER_HANDLERS.DIRECTORY_SEPARATOR."*.php");
 		$serialized_files = serialize($files);
+		$sort=array();
 		if ($glob_signature != md5($serialized_files)) {
 			foreach ($files as $file) {
 				$parts = pathinfo($file);
@@ -96,11 +97,17 @@ class controller {
 						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
 					} else {
 						$this->_handlers[$classname] = $new_handler;
-						$handler_create = $new_handler->create($this);
+						$sort[$classname] = $handler_create = $new_handler->create($this);
 						$this->log("$classname"."->create() = $handler_create");
 					}
 				}
 			}
+			arsort($sort);
+			$temp_handlers = array();
+			foreach ($sort as $classname=>$order) {
+				$temp_handlers[$classname] = $this->_handlers[$classname];
+			}
+			$this->_handlers = $temp_handlers;
 			$glob_signature = md5($serialized_files);
 		} else {
 			// glob signature matches, lets not rebuild the handlers.
