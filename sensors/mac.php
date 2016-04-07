@@ -116,7 +116,7 @@ class mac_sensor {
 						if (!isset($active_macs[$mac])) {
 							$mac_ip_map[$mac] = $ips[$key];
 							$ping = $this->ping($ips[$key]);
-							if ($ping) {
+							if ($ping !== false) {
 								$active_macs[$mac] = time();
 								$this->raise_event($mac, $mac_ip_map[$mac],1);
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
