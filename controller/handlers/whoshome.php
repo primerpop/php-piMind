@@ -31,6 +31,7 @@ class whoshome extends controller_handler {
 			foreach ($pins as $pin =>$macs) {
 				foreach ($macs as $mac => $mac_states ) {
 					if (isset($this->_validmacs[$mac])) {
+						$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
 						if ($mac_states["state"] == 1) {
 							if (!isset($this->_is_home[$mac])) {
 								$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has arrived");
@@ -41,7 +42,7 @@ class whoshome extends controller_handler {
 							$this->_is_home[$mac] = time();
 							
 						} else {
-							$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
+							
 							
 						}
 					}
