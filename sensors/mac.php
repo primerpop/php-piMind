@@ -78,7 +78,9 @@ class mac_sensor {
 	}
 	function arp_dump(){
 		$output = array();
-		
+		//run an nmap to freshen the ARP table with available devices.
+		$return = exec($this->_nmap_cmd);
+		sleep(1);
 		$return = exec($this->_arp_cmd, $output);//$this->_arp_cmd);
 		$ips = array();
 		$macs = array();
@@ -166,7 +168,10 @@ class mac_sensor {
 		if (isset($this->_configuration["arp_cmd"])) {
 			$this->_arp_cmd = $this->_configuration["arp_cmd"];
 		}	
-		
+
+		if (isset($this->_configuration["nmap_cmd"])) {
+			$this->_nmap_cmd = $this->_configuration["nmap_cmd"];
+		}
 		if (isset($this->_configuration["secret"])) {
 			$this->_secret = $this->_configuration["secret"];
 		} else {
