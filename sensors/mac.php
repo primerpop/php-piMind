@@ -77,17 +77,12 @@ class mac_sensor {
 		return $result;
 	}
 	function arp_dump(){
-		$output = system($this->_arp_cmd);
+		$output = system($this->_arp_cmd);//$this->_arp_cmd);
 		
-		
-		if (preg_match_all('/([A-F0-9:]+)"/',$output ,$macs) ) {
-			$macs = $macs[1];
-		}
-		
-		$ips=array();
-		if (preg_match_all('/([A-F0-9.]+)"/',$output ,$ips) ) {
-			$ips = $ips[1];
-		}
+		$var = preg_match("/$ip(.*)on/",$output,$matches);
+		$temp = $matches[1];
+		$var1 = preg_match("/at(.*)/",$output,$matches);
+		print_r($matches[1]);
 		
 		exit;
 	}
