@@ -20,7 +20,7 @@ class state_watcher extends controller_handler {
 			$this->_states = unserialize(file_get_contents($this->_state_file));
 		}
 		
-		return 1;
+		return 99;
 	}
 	public function __destruct() {
 		$this->destroy();
