@@ -40,6 +40,9 @@ class whoshome extends controller_handler {
 							}
 							$this->_is_home[$mac] = time();
 							
+						} else {
+							$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
+							
 						}
 					}
 				}
