@@ -26,15 +26,16 @@ class whoshome extends controller_handler {
 	}
 	private function _build_whoshome() {
 		$state_watcher = & $this->_controller->get_handler("state_watcher");
+		$event_id = $state_watcher->get_states()["event_id"];
 		$states = & $state_watcher->get_states()["mac_sensor"];
 		foreach ($states as $sensor_group_name => $pins) {
 			foreach ($pins as $pin =>$macs) {
 				foreach ($macs as $mac => $mac_states ) {
 					if (isset($this->_validmacs[$mac])) {
-						$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
+						$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
 						if ($mac_states["state"] == 1) {
 							if (!isset($this->_is_home[$mac])) {
-								$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has arrived");
+								$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has arrived");
 								$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
 								$this->_controller->event($message);
 								
