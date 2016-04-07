@@ -77,14 +77,21 @@ class mac_sensor {
 		return $result;
 	}
 	function arp_dump(){
-		$output = system($this->_arp_cmd);//$this->_arp_cmd);
+		$output = array();
 		
-		$var = preg_match("/$ip(.*)on/",$output,$matches);
-		$temp = $matches[1];
-		$var1 = preg_match("/at(.*)/",$output,$matches);
-		print_r($matches[1]);
+		$return = exec($this->_arp_cmd, $output);//$this->_arp_cmd);
+		$ips = array();
+		$macs = array();
 		
-		exit;
+		foreach ($output as $line) {
+			$parts = explode(" ", $line);
+			$ip = str_replace(")","",str_replace("(","", $parts[1]));
+			$mac = $parts[3];
+			$ips[] = $ip;
+			$macs[] = $mac;
+		}
+		return array("ips"=>$ips, "macs"=>$macs);
+		
 	}
 	function realtime() {
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
@@ -94,10 +101,11 @@ class mac_sensor {
 			while (true) {
 				if(true) {
 					$mac_ip_map = array();
-					$this->arp_dump();
-					var_dump($macs);
+					$payload = $this->arp_dump();
+					$macs = $payload["macs"];
+					$ips = $payload["ips"];
 					
-					var_dump($ips);
+					
 					
 					// loop once to update the active list
 					foreach ($macs as $key => $mac) {
