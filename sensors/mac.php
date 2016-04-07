@@ -97,9 +97,10 @@ class mac_sensor {
 	}
 	function realtime() {
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
+		$active_macs = array();
 		while (!$this->_shutdown) {
 			
-			$active_macs = array();
+			
 			
 			if(true) {
 				$mac_ip_map = array();
