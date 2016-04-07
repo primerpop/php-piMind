@@ -113,17 +113,22 @@ class mac_sensor {
 				// loop once to update the active list
 				foreach ($macs as $key => $mac) {
 					if ($mac) {
+						$ping = $this->ping($ips[$key]);
 						if (!isset($active_macs[$mac])) {
 							$mac_ip_map[$mac] = $ips[$key];
-							$ping = $this->ping($ips[$key]);
+							
 							if ($ping !== false) {
 								$active_macs[$mac] = time();
 								$this->raise_event($mac, $mac_ip_map[$mac],1);
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") seen. $ping ms");
 							} else{
+								
 								$this->log("MAC $mac (".$mac_ip_map[$mac].") failed ping. $ping ms");
 								unset($macs[$mac]);
 							}
+						}
+						if ($ping === false) {
+							unset($macs[$mac]);
 						}
 					}
 				}
