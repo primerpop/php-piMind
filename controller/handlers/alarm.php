@@ -24,6 +24,7 @@ class alarm extends controller_handler {
 				case EVENT_TYPE_SENSOR:
 					break;
 				case EVENT_TYPE_HANDLER:
+					print_r($data);
 					if ($data->event_code == 10) {
 						$this->_controller->log("Alarm Service sees an event coded with event_code 10");
 					}
