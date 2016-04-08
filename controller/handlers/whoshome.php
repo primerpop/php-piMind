@@ -38,7 +38,7 @@ class whoshome extends controller_handler {
 				foreach ($pins as $pin =>$macs) {
 					foreach ($macs as $mac => $mac_states ) {
 						if (isset($this->_validmacs[$mac])) {
-							$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
+							//$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has state ". $mac_states["state"]);
 							if ($mac_states["state"] == 1) {
 								if (!isset($this->_is_home[$mac])) {
 									$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has arrived");
@@ -65,7 +65,7 @@ class whoshome extends controller_handler {
 					$this->_controller->event($message);
 					if (count($this->_is_home) == 0) {
 						// nobody home.
-						$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_nobodyhome,"WARN",5,"No valid macs seen on network.  Nobody home indicator.",1);
+						$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_nobodyhome,"WARN",10,"No valid macs seen on network.  Nobody home indicator.",1);
 						$this->_controller->event($message);
 					}
 				} 
