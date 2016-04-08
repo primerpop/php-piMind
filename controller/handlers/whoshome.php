@@ -14,8 +14,10 @@ class whoshome extends controller_handler {
 	private $_configuration = array();
 	private $_is_home = array();
 	private $_away_timeout = 60;
+	
 	const home_user_arrived = 1;
 	const home_user_departed = 2;
+	const home_user_nobodyhome = 3;
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("handler template initialized");
@@ -61,10 +63,17 @@ class whoshome extends controller_handler {
 					unset($this->_is_home[$mac]);
 					$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_departed,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has departed",1);
 					$this->_controller->event($message);
+					if (count($this->_is_home) == 0) {
+						// nobody home.
+						$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_nobodyhome,"WARN",5,"No valid macs seen on network.  Nobody home indicator.",1);
+						$this->_controller->event($message);
+					}
 				} 
 				
 			}
 		}
+		
+		
 			/**
 		 *  [90:B6:86:5C:0C:01] => Array
         (
