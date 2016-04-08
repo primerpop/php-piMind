@@ -31,7 +31,7 @@ class whoshome extends controller_handler {
 			$event_id = $state_watcher->get_states()["event_id"];
 			$states = & $state_data["mac_sensor"];
 		}
-		if ($event_id) {
+		if ($event_id && isset($state_data["mac_sensor"])) {
 			foreach ($states as $sensor_group_name => $pins) {
 				foreach ($pins as $pin =>$macs) {
 					foreach ($macs as $mac => $mac_states ) {
@@ -105,7 +105,7 @@ class whoshome extends controller_handler {
 	
 		foreach($this->_configuration as $mac => $name) {
 			$this->_validmacs[$mac]= $name; 
-			//$this->_is_home[$mac] = time() + $this->_away_timeout;
+			$this->_is_home[$mac] = time();// + $this->_away_timeout;
 		}
 		if ($this->_configuration) {
 			return 1;
