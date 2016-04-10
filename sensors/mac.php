@@ -133,7 +133,7 @@ class mac_sensor {
 					}
 					
 				}
-				print_r($active_macs);
+				//print_r($active_macs);
 				foreach ($active_macs as $mac => $timestamp) {
 					if (!in_array($mac, $macs)) {
 						
