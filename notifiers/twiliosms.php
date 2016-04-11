@@ -74,4 +74,4 @@ foreach ($r as $sid => $message) {
 }
 $r = $t->list_messages();
 
-$t1= ($t->send_message("+16138078143", "test 1234 MEssage from my keyboard"));
+$t1= ($t->send_message("", "test 1234 MEssage from my keyboard"));
