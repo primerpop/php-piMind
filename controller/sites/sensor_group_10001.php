@@ -1,11 +1,11 @@
 <?php
 
-class sensor_group_10001 {
+class sensor_group_10001 extends controller_handler  {
 	protected $_controller = null;
 	
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
-		$this->_controller->log("handler template initialized");
+		$this->_controller->log("sensor_group_10001 handler initialized");
 		return 1;
 	}
 	public function destroy() {
