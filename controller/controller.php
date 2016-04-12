@@ -42,6 +42,7 @@ class controller {
 	public function __construct($controller_config_file ="controller.ini",$sensor_config_file ="sensors.ini") {
 		$this->log("piMind Event Controller started");
 		$this->_setup_handlers();
+		$this->_setup_site_handlers();
 		$config = parse_ini_file($controller_config_file);
 		foreach ($config as $prop => $value) {
 			switch ($prop) {
