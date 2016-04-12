@@ -126,36 +126,31 @@ class controller {
 		$files = glob(PIMIND_CONTROLLER_SITES.DIRECTORY_SEPARATOR."*.php");
 		$serialized_files = serialize($files);
 		$sort=array();
-		if ($glob_signature_1 != md5($serialized_files)) {
-			foreach ($files as $file) {
-				$parts = pathinfo($file);
-				$classname = $parts["filename"];
-				$basename  = $parts["basename"];
-				if (isset($this->_site_handlers[$classname])) {
-					// already instanciated
-				} else {
-					include_once $file;
-					$new_handler = new $classname;
-					$this->_site_handlers[$classname] = $new_handler;
-					$sort[$classname] = $handler_create = $new_handler->create($this);
-					$this->log("$classname"."->create() = $handler_create");
-				}
-				
+		foreach ($files as $file) {
+			$parts = pathinfo($file);
+			$classname = $parts["filename"];
+			$basename  = $parts["basename"];
+			if (isset($this->_site_handlers[$classname])) {
+				// already instanciated
+			} else {
+				include_once $file;
+				$new_handler = new $classname;
+				$this->_site_handlers[$classname] = $new_handler;
+				$sort[$classname] = $handler_create = $new_handler->create($this);
+				$this->log("$classname"."->create() = $handler_create");
 			}
-			arsort($sort);
-			$temp_handlers = array();
-			$this->log("re-ordering site handler firing order");
-			foreach ($sort as $classname=>$order) {
-				$temp_handlers[$classname] = $this->_site_handlers[$classname];
-			}
-			$this->_handlers = $temp_handlers;
-			$this->log("Now as: " . implode(",",array_keys($this->_site_handlers)));
-				
-			$glob_signature_1 = md5($serialized_files);
-		} else {
-			// glob signature matches, lets not rebuild the handlers.
-			return 1;
+			
 		}
+		arsort($sort);
+		$temp_handlers = array();
+		$this->log("re-ordering site handler firing order");
+		foreach ($sort as $classname=>$order) {
+			$temp_handlers[$classname] = $this->_site_handlers[$classname];
+		}
+		$this->_handlers = $temp_handlers;
+		$this->log("Now as: " . implode(",",array_keys($this->_site_handlers)));
+			
+
 	}
 	function get_handler($handler_name) {
 		if (isset($this->_handlers[$handler_name])) {
