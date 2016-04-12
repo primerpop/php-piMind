@@ -125,12 +125,12 @@ class controller {
 		}
 	}
 	private function _setup_site_handlers() {
-		static $glob_signature = 0;
+		static $glob_signature_1 = 0;
 		$this->log("Setting up site scripts");
 		$files = glob(PIMIND_CONTROLLER_SITES.DIRECTORY_SEPARATOR."*.php");
 		$serialized_files = serialize($files);
 		$sort=array();
-		if ($glob_signature != md5($serialized_files)) {
+		if ($glob_signature_1 != md5($serialized_files)) {
 			foreach ($files as $file) {
 				$parts = pathinfo($file);
 				$classname = $parts["filename"];
@@ -158,7 +158,7 @@ class controller {
 			$this->_handlers = $temp_handlers;
 			$this->log("Now as: " . implode(",",array_keys($this->_site_handlers)));
 				
-			$glob_signature = md5($serialized_files);
+			$glob_signature_1 = md5($serialized_files);
 		} else {
 			// glob signature matches, lets not rebuild the handlers.
 			return 1;
