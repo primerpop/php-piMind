@@ -100,13 +100,9 @@ class controller {
 				} else {
 					include_once $file;
 					$new_handler = new $classname;
-					if (get_parent_class($new_handler) instanceof controller_handler) {
-						$this->log("Handled $basename does not extend the controller_handler class.  We don't know how to deal with it");
-					} else {
-						$this->_handlers[$classname] = $new_handler;
-						$sort[$classname] = $handler_create = $new_handler->create($this);
-						$this->log("$classname"."->create() = $handler_create");
-					}
+					$this->_handlers[$classname] = $new_handler;
+					$sort[$classname] = $handler_create = $new_handler->create($this);
+					$this->log("$classname"."->create() = $handler_create");
 				}
 			}
 			arsort($sort);
@@ -140,14 +136,11 @@ class controller {
 				} else {
 					include_once $file;
 					$new_handler = new $classname;
-					if (get_parent_class($new_handler) instanceof controller_handler) {
-						$this->log("Site Handler $basename does not extend the controller_handler class.  We don't know how to deal with it");
-					} else {
-						$this->_site_handlers[$classname] = $new_handler;
-						$sort[$classname] = $handler_create = $new_handler->create($this);
-						$this->log("$classname"."->create() = $handler_create");
-					}
+					$this->_site_handlers[$classname] = $new_handler;
+					$sort[$classname] = $handler_create = $new_handler->create($this);
+					$this->log("$classname"."->create() = $handler_create");
 				}
+				
 			}
 			arsort($sort);
 			$temp_handlers = array();
