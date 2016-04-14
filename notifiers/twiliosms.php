@@ -1,9 +1,6 @@
 <?php
 
-// bring in common paths
-include("../paths.php");
-// get constants
-include(PIMIND_HOME."/constants.php");
+
 
 class twiliosms {
 	private $_account_sid = 0;
@@ -65,14 +62,3 @@ class twiliosms {
 		
 	}
 }
-
-
-/*$r = $t->list_messages();
-//print_r($r);
-foreach ($r as $sid => $message) {
-	$t->read_message($sid);
-}
-$r = $t->list_messages();
-
-$t1= ($t->send_message("", "test 1234 MEssage from my keyboard"));
-*/
