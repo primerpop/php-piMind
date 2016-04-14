@@ -174,9 +174,9 @@ class controller {
 		$msg->pin = $pin;
 		// see if the pin is codified with a sensor group.
 		$parts = explode("/",$pin);
-		print_r($parts);
-		if ($parts[0]) {
-			$msg->sensor_group = $parts[0];
+		//print_r($parts);
+		if ($parts[1]) {
+			$msg->sensor_group = $parts[1];
 		}
 		$msg->state = $state;
 		$msg->label = $label;
