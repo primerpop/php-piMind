@@ -172,6 +172,11 @@ class controller {
 		$msg->type = EVENT_TYPE_HANDLER;
 		$msg->ts = time();
 		$msg->pin = $pin;
+		// see if the pin is codified with a sensor group.
+		$parts = explode("/",$pin);
+		if ($parts[0]) {
+			$msg->sensor_group = $parts[0];
+		}
 		$msg->state = $state;
 		$msg->label = $label;
 		$msg->event_code = $event_code;
