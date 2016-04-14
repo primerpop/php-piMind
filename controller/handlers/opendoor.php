@@ -43,7 +43,7 @@ class opendoor extends controller_handler {
 						} elseif (isset($this->_door_states["/".$sensor_group_name."/".$pin]) && $current_state == 0) {
 							unset($this->_door_states["/".$sensor_group_name."/".$pin]);
 							$this->_controller->log("opendoor: no longer watching opendoor on /$sensor_group_name/" . $pin ."/" .$label. ".  Alarm cleared.");
-							$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::door_kept_open,"OK",10,"Door Closed.",1);
+							$message = $this->_controller->generate_handler_event(get_class($this),"/".$sensor_group_name."/".$pin,self::door_kept_open,"OK",10,"Door Closed.",1);
 						} else {
 								
 						}
