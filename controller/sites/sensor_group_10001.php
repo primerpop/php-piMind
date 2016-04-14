@@ -29,7 +29,7 @@ class sensor_group_10001 extends controller_handler  {
 						case "opendoor":
 							// Alarm
 							$this->_controller->log("Opendoor event... notifying");
-							if (($data->pin == 2 || $data->pin ==5) && $data->state == 1 && !$backdoor_notified) {
+							if (($data->pin == "/10001/5" || $data->pin =="/10001/3") && $data->state == 1 && !$backdoor_notified) {
 								$backdoor_notified= 1;
 								
 								foreach ($this->_configuration as $number) {
