@@ -42,7 +42,7 @@ class whoshome extends controller_handler {
 							if ($mac_states["state"] == 1) {
 								if (!isset($this->_is_home["/".$sensor_group_name."/".$mac])) {
 									$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs["/".$sensor_group_name."/".$mac] . " has arrived");
-									$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
+									$message = $this->_controller->generate_handler_event(get_class($this),"/".$sensor_group_name."/".$mac,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs["/".$sensor_group_name."/".$mac] . " has arrived",1);
 									$this->_controller->event($message);
 									
 								}
