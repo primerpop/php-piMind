@@ -132,7 +132,7 @@ class piface_spi {
 				$led->turnOff();
 		
 		        }
-			
+		        gc_collect_cycles();
 		        usleep($this->_configuration["usleep_poll_delay"]);
 		}
 		$this->log("Realtime loop shutdown condition");
