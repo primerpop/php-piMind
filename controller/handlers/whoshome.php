@@ -42,7 +42,7 @@ class whoshome extends controller_handler {
 							if ($mac_states["state"] == 1) {
 								if (!isset($this->_is_home[$mac])) {
 									$this->_controller->log($event_id .": " .$mac . " " . $this->_validmacs[$mac] . " has arrived");
-									$message = $this->_controller->generate_handler_event(get_class($this),$sensor_group_name,$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
+									$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_arrived,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has arrived",1);
 									$this->_controller->event($message);
 									
 								}
@@ -61,11 +61,11 @@ class whoshome extends controller_handler {
 				if (($time + $this->_away_timeout) < time()) {
 					$this->_controller->log($mac . " " . $this->_validmacs[$mac] . " has not been seen for ". $this->_away_timeout. " seconds");
 					unset($this->_is_home[$mac]);
-					$message = $this->_controller->generate_handler_event(get_class($this),$sensor_group_name,$pin,self::home_user_departed,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has departed",1);
+					$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_departed,"INFO",5,$mac . " " . $this->_validmacs[$mac] . " has departed",1);
 					$this->_controller->event($message);
 					if (count($this->_is_home) == 0) {
 						// nobody home.
-						$message = $this->_controller->generate_handler_event(get_class($this),$sensor_group_name,$pin,self::home_user_nobodyhome,"WARN",10,"No valid macs seen on network.  Nobody home indicator.",1);
+						$message = $this->_controller->generate_handler_event(get_class($this),$pin,self::home_user_nobodyhome,"WARN",10,"No valid macs seen on network.  Nobody home indicator.",1);
 						$this->_controller->event($message);
 					}
 				} 
