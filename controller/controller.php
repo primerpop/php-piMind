@@ -135,8 +135,10 @@ class controller {
 			} else {
 				include_once $file;
 				$new_handler = new $classname;
-				$this->_site_handlers[$classname] = $new_handler;
-				$sort[$classname] = $handler_create = $new_handler->create($this);
+				$indexes = explode("_", $classname);
+				$index = $indexes[count($indexes) - 1];
+				$this->_site_handlers[$index] = $new_handler;
+				$sort[$index] = $handler_create = $new_handler->create($this);
 				$this->log("$classname"."->create() = $handler_create");
 			}
 			
