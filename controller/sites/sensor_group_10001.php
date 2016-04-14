@@ -9,7 +9,9 @@ class sensor_group_10001 extends controller_handler  {
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("sensor_group_10001 handler initialized");
+		$this->read_configuration();
 		include_once(PIMIND_NOTIFIERS.DIRECTORY_SEPARATOR."twiliosms.php");
+		
 		$this->_sms = new twiliosms;
 		return 1;
 	}
@@ -38,6 +40,7 @@ class sensor_group_10001 extends controller_handler  {
 							} elseif ($data->state == 0) {
 								$backdoor_notified= 0;
 							}
+							break;
 						case "whoshome":
 							$this->_controller->log("Opendoor event... notifying");
 							foreach ($this->_configuration as $number) {
