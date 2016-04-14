@@ -147,7 +147,7 @@ class controller {
 		foreach ($sort as $classname=>$order) {
 			$temp_handlers[$classname] = $this->_site_handlers[$classname];
 		}
-		$this->_handlers = $temp_handlers;
+		$this->_site_handlers = $temp_handlers;
 		$this->log("Now as: " . implode(",",array_keys($this->_site_handlers)));
 			
 
