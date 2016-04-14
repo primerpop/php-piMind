@@ -4,10 +4,13 @@ class sensor_group_10001 extends controller_handler  {
 	protected $_controller = null;
 	private $_configuration = array();
 	
+	private $_sms;
+	
 	public function create($controller_pointer) {
 		$this->_controller = $controller_pointer;
 		$this->_controller->log("sensor_group_10001 handler initialized");
-		
+		include_once(PIMIND_NOTIFIERS.DIRECTORY_SEPARATOR."twiliosms.php");
+		$this->_sms = new twiliosms;
 		return 1;
 	}
 	public function destroy() {
@@ -24,19 +27,20 @@ class sensor_group_10001 extends controller_handler  {
 					switch ($data->source_handler) {
 						case "opendoor":
 							// Alarm
+							$this->_controller->log("Opendoor event... notifying");
 							if ($data->pin == 2 && $data->state == 1 && !$backdoor_notified) {
 								$backdoor_notified= 1;
-								include_once(PIMIND_NOTIFIERS.DIRECTORY_SEPARATOR."twiliosms.php");
-								$t = new twiliosms;
+								
 								foreach ($this->_configuration as $number) {
-									$t->send_message($number, "Backdoor is ajar!!");
+									$this->_sms->send_message($number, "Backdoor is ajar!!");
 								}
 							} elseif ($data->state == 0) {
 								$backdoor_notified= 0;
 							}
 						case "whoshome":
+							$this->_controller->log("Opendoor event... notifying");
 							foreach ($this->_configuration as $number) {
-								$t->send_message($number, "Who's home event: ". $data->state);
+								$this->_sms->send_message($number, "Who's home event: ". $data->state);
 							}
 					
 					}
