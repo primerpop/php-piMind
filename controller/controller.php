@@ -74,7 +74,7 @@ class controller {
 		}
 		if (isset($data->sensor_group)) {
 			if (isset($this->_site_handlers[$data->sensor_group])) {
-				$site_handler = $site_handlers[$data->sensor_group];
+				$site_handler = $this->_site_handlers[$data->sensor_group];
 				$site_handler->event($data);
 			}
 		}
