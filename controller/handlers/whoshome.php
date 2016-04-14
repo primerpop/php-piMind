@@ -114,7 +114,7 @@ class whoshome extends controller_handler {
 	
 		foreach($this->_configuration as $mac => $name) {
 			$this->_validmacs[$mac]= $name; 
-			$this->_is_home[$mac] = time();// + $this->_away_timeout;
+			//$this->_is_home[$mac] = time();// + $this->_away_timeout;
 		}
 		if ($this->_configuration) {
 			return 1;

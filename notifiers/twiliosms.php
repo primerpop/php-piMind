@@ -66,8 +66,8 @@ class twiliosms {
 	}
 }
 
-$t = new twiliosms;
-$r = $t->list_messages();
+
+/*$r = $t->list_messages();
 //print_r($r);
 foreach ($r as $sid => $message) {
 	$t->read_message($sid);
@@ -75,3 +75,4 @@ foreach ($r as $sid => $message) {
 $r = $t->list_messages();
 
 $t1= ($t->send_message("", "test 1234 MEssage from my keyboard"));
+*/
