@@ -30,6 +30,7 @@ class piface_spi {
 	private $_shutdown = 0;
 	private $_secret = "";
 	private $_invert_state = 0;
+	private $_do_leds = 0;
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -95,11 +96,16 @@ class piface_spi {
 				$this->_shutdown = 1;
 			}
 		}
-		$leds = $this->_spi_dev->getLeds();
+		if ($this->_do_leds) {
+			$leds = $this->_spi_dev->getLeds();
+		}
+		
 		while (!$this->_shutdown) {
 			$tick++;
 			foreach ($input_pins as $pin => $inputPin) {
-				$led = $leds[$pin];
+				if ($this->_do_leds) {
+					$led = $leds[$pin];
+				}
 				
 				$label = "";
 				if (isset($pin_map[$pin])) {
@@ -117,16 +123,22 @@ class piface_spi {
 			    
 					if ($value == 1) {
 						$value = 0;
-						$led->turnOff();
+						if ($this->_do_leds) {
+							$led->turnOff();
+						}
 					} else {
 						$value = 1;
-						$led->turnOn();
+						if ($this->_do_leds) {
+							$led->turnOn();
+						}
 					}
 			    }
-			    if (!$value) {
-			    	$led->turnOff();
-			    } else {
-			    	$led->turnOn();
+			    if ($this->_do_leds) {
+				    if (!$value) {
+				    	$led->turnOff();
+				    } else {
+				    	$led->turnOn();
+				    }
 			    }
 				if ($value != $this->_last_state[$pin]) {
 			        $this->log("Event on ".$label . "($pin) = $value. LS = " . $this->_last_state[$pin]);
@@ -136,7 +148,9 @@ class piface_spi {
 				if ($this->_debug) {
 		                echo time() . ": " . $label . "($pin) = " .$value ."\n\r";
 				}
-				$led->turnOff();
+				if ($this->_do_leds) {
+					$led->turnOff();
+				}
 		
 			}
 		    gc_collect_cycles();
