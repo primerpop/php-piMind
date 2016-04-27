@@ -78,6 +78,7 @@ class piface_spi {
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
 		
 			
+			
 		if (isset($this->_spi_dev)) {
 			$input_pins = $this->_spi_dev->getInputPins();
 			foreach ($input_pins as $pin) {
@@ -144,7 +145,8 @@ class piface_spi {
 		    if ($tick > $memory_check_ticks) {
 		    	if ($cur_memory > $peak_memory) {
 		    		$peak_memory = $cur_memory;
-		    		$this->log("Memory peak met and exceeded.  $cur_memory");
+		    		$dump = var_dump($this);
+		    		$this->log("Memory peak met and exceeded.  $cur_memory, " . strlen($dump));
 		    	}
 		    }
 		}
