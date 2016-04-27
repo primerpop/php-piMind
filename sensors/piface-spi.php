@@ -70,7 +70,7 @@ class piface_spi {
 	 * @return number
 	 */
 	function realtime() {
-		$memory_check_ticks = 100000;
+		$memory_check_ticks = 100;
 		$peak_memory = 0;
 		$tick = 0;
 		$pin_map = $this->_pin_map;
@@ -94,10 +94,11 @@ class piface_spi {
 				$this->_shutdown = 1;
 			}
 		}
+		$leds = $this->_spi_dev->getLeds();
 		while (!$this->_shutdown) {
 			$tick++;
 			foreach ($input_pins as $pin => $inputPin) {
-				$led = $this->_spi_dev->getLeds()[$pin];
+				$led = $leds[$pin];
 				
 				$label = "";
 				if (isset($pin_map[$pin])) {
