@@ -70,27 +70,32 @@ class piface_spi {
 	 * @return number
 	 */
 	function realtime() {
+		$memory_check_ticks = 100000;
+		$peak_memory = 0;
+		$tick = 0;
 		$pin_map = $this->_pin_map;
 		$ignore_pins = $this->_ignore_pins; 
 		$this->log($this->_configuration["sensor_group"] . " entered realtime poll with delay of " . $this->_configuration["usleep_poll_delay"]);
-		while (!$this->_shutdown) {
+		
 			
-			if (isset($this->_spi_dev)) {
-				$input_pins = $this->_spi_dev->getInputPins();
-				foreach ($input_pins as $pin) {
-					if (in_array($pin,$this->_ignore_pins)) {
-						unset($ignore_pins[$pin]);
-					}
-				}
-			} else {
-				$this->log("piFace Interface isn't available",10);
-				if ($this->_debug) {
-					sleep(5);
-				} else {
-					$this->log("piFace not in debug mode and piFace Interface isn't available. ENDING");
-					$this->_shutdown = 1;
+		if (isset($this->_spi_dev)) {
+			$input_pins = $this->_spi_dev->getInputPins();
+			foreach ($input_pins as $pin) {
+				if (in_array($pin,$this->_ignore_pins)) {
+					unset($input_pins[$pin]);
 				}
 			}
+		} else {
+			$this->log("piFace Interface isn't available",10);
+			if ($this->_debug) {
+				sleep(5);
+			} else {
+				$this->log("piFace not in debug mode and piFace Interface isn't available. ENDING");
+				$this->_shutdown = 1;
+			}
+		}
+		while (!$this->_shutdown) {
+			$tick++;
 			foreach ($input_pins as $pin => $inputPin) {
 				$led = $this->_spi_dev->getLeds()[$pin];
 				
@@ -131,9 +136,16 @@ class piface_spi {
 				}
 				$led->turnOff();
 		
-		        }
-		        gc_collect_cycles();
-		        usleep($this->_configuration["usleep_poll_delay"]);
+			}
+		    gc_collect_cycles();
+		    usleep($this->_configuration["usleep_poll_delay"]);
+		    $cur_memory = memory_get_usage(true);
+		    if ($tick > $memory_check_ticks) {
+		    	if ($cur_memory > $peak_memory) {
+		    		$peak_memory = $cur_memory;
+		    		$this->log("Memory peak met and exceeded.  $cur_memory");
+		    	}
+		    }
 		}
 		$this->log("Realtime loop shutdown condition");
 		return $this->_shutdown;
