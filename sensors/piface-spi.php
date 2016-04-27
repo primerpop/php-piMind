@@ -146,7 +146,8 @@ class piface_spi {
 		    	if ($cur_memory > $peak_memory) {
 		    		$peak_memory = $cur_memory;
 		    		$dump = print_r($this,true);
-		    		$this->log("Memory peak met and exceeded.  $cur_memory, " . strlen($dump));
+		    		$pf_dump = print_r($this->_spi_dev,true);
+		    		$this->log("Memory peak met and exceeded.  $cur_memory, " . strlen($dump) . ", ". strlen($pf_dump));
 		    	}
 		    }
 		}
