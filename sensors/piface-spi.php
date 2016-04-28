@@ -170,7 +170,7 @@ class piface_spi {
 				}
 		
 			}
-			$this->_destroy_spi();
+			
 		    gc_collect_cycles();
 		    usleep($this->_configuration["usleep_poll_delay"]);
 		    $cur_memory = memory_get_usage(true);
@@ -182,6 +182,7 @@ class piface_spi {
 		    		$this->log("Memory peak met and exceeded.  $cur_memory, " . strlen($dump) . ", ". strlen($pf_dump));
 		    	}
 		    }
+		    $this->_destroy_spi();
 		}
 		$this->log("Realtime loop shutdown condition");
 		return $this->_shutdown;
