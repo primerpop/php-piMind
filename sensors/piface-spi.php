@@ -115,7 +115,7 @@ class piface_spi {
 		}
 		
 		while (!$this->_shutdown) {
-			if (!$this->_spi_dev) {
+			if (!isset($this->_spi_dev)) {
 				$this->_setup_spi();
 			}
 			$tick++;
