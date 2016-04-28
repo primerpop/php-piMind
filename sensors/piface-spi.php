@@ -171,7 +171,7 @@ class piface_spi {
 		
 			}
 			
-		    gc_collect_cycles();
+		    
 		    usleep($this->_configuration["usleep_poll_delay"]);
 		    $cur_memory = memory_get_usage(true);
 		    if ($tick > $memory_check_ticks) {
@@ -183,6 +183,7 @@ class piface_spi {
 		    	}
 		    }
 		    $this->_destroy_spi();
+		    gc_collect_cycles();
 		}
 		$this->log("Realtime loop shutdown condition");
 		return $this->_shutdown;
