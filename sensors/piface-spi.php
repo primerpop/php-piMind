@@ -51,6 +51,20 @@ class piface_spi {
 	public function __destruct() {
 		
 	}
+	private function _setup_spi() {
+		if (class_exists("Pkj\Raspberry\PiFace\PiFaceDigital")) {
+			$this->_spi_dev = PiFaceDigital::create();
+			$this->_spi_dev->init();
+			return 1;
+		} else {
+			$this->log("SPI:  PiFaceDigital class is not available",10);
+			return 0;	
+		}
+		
+	}
+	private function _destroy_spi() {
+		unset($this->_spi_dev);
+	}
 	function raise_event($pin,$state) {
 		$data = array();
 		$data["pin"] = $pin;
@@ -101,6 +115,9 @@ class piface_spi {
 		}
 		
 		while (!$this->_shutdown) {
+			if (!$this->_spi_dev) {
+				$this->_setup_spi();
+			}
 			$tick++;
 			foreach ($input_pins as $pin => $inputPin) {
 				if ($this->_do_leds) {
@@ -153,6 +170,7 @@ class piface_spi {
 				}
 		
 			}
+			$this->_destroy_spi();
 		    gc_collect_cycles();
 		    usleep($this->_configuration["usleep_poll_delay"]);
 		    $cur_memory = memory_get_usage(true);
