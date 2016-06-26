@@ -43,6 +43,7 @@ class state_watcher extends controller_handler {
 		if (isset($data->type)) {
 			switch ($data->type) {
 				case EVENT_TYPE_SENSOR:
+					
 					$this->_states[$data->class][$data->sensor_group][$data->pin][$data->label] = $data->state;
 					break;
 				case EVENT_TYPE_HANDLER:
@@ -63,7 +64,8 @@ class state_watcher extends controller_handler {
 			}
 			$this->save_state();
 		}
-		//echo json_encode($this->_states);
+		
+		file_put_contents(PIMIND_STATE .DIRECTORY_SEPARATOR . "controller-state-".getmygid().".json" , json_encode($this->_states));
 	}
 	public function tick() {
 	
