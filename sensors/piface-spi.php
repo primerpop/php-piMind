@@ -30,7 +30,7 @@ class piface_spi {
 	private $_shutdown = 0;
 	private $_secret = "";
 	private $_invert_state = 0;
-	private $_do_leds = 0;
+	private $_do_leds = 1;
 	/**
 	 * Constructor.  Read configuration and set up the class
 	 */
@@ -212,6 +212,9 @@ class piface_spi {
 			$this->_ignore_pins = explode(",",$this->_configuration["ignore_pins"] );
 			$this->log("ignoring pins " .$this->_configuration["ignore_pins"] );
 			
+		}
+		if (isset($this->_configuration["leds"])) {
+			$this->_do_leds = $this->_configuration["leds"];
 		}
 		if (isset($this->_configuration["debug"])) {
 			$this->_debug = $this->_configuration["debug"];
