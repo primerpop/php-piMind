@@ -65,7 +65,7 @@ class state_watcher extends controller_handler {
 			$this->save_state();
 		}
 		
-		file_put_contents(PIMIND_STATE .DIRECTORY_SEPARATOR . "controller-state-".getmygid().".json" , json_encode($this->_states));
+		file_put_contents(PIMIND_STATE .DIRECTORY_SEPARATOR . "controller-state-0.json" , json_encode($this->_states));
 	}
 	public function tick() {
 	
