@@ -31,6 +31,7 @@ class state_watcher extends controller_handler {
 	function save_state() {
 		if ($this->_states) {
 			file_put_contents($this->_state_file,serialize($this->_states));
+			file_put_contents(PIMIND_STATE .DIRECTORY_SEPARATOR . "controller-state-0.json" , json_encode($this->_states));
 		}
 	}
 	function get_states() {
